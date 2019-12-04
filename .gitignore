@@ -1,0 +1,11 @@
+*.db
+*.log
+
+/bin
+
+.idea/
+*.iml
+
+*/target/*
+
+**/logs
