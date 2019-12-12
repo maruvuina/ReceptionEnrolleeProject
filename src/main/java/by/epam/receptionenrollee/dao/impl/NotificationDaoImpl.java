@@ -6,6 +6,7 @@ import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.dao.NotificationDao;
 import by.epam.receptionenrollee.entity.Notification;
 import by.epam.receptionenrollee.exception.DaoException;
+import by.epam.receptionenrollee.sql.SqlQuery;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -20,7 +21,6 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
 
     public NotificationDaoImpl() {
         Mapper<Notification, PreparedStatement> mapperToDatabase = (Notification notification, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, notification.getId());
             preparedStatement.setInt(1, notification.getIdEnrollee());
             preparedStatement.setBoolean(2, notification.isEnrolment());
         };
@@ -44,8 +44,8 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
     }
 
     @Override
-    public boolean insertNotification(Notification notification) {
-        return false;
+    public boolean insertNotification(Notification notification) throws DaoException {
+        return insert(notification, SqlQuery.NOTIFICATION_INSERT);
     }
 
     @Override

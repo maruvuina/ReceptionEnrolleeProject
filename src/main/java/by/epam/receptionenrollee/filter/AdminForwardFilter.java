@@ -8,7 +8,8 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@WebFilter(dispatcherTypes = { DispatcherType.FORWARD }, urlPatterns = { "/jsp/admin/*" } )
+@WebFilter(dispatcherTypes = { DispatcherType.FORWARD },
+        urlPatterns = { "/jsp/admin/*" } )
 
 public class AdminForwardFilter implements Filter {
     @Override
@@ -19,7 +20,7 @@ public class AdminForwardFilter implements Filter {
             throws IOException, ServletException  {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         User user = (User) httpRequest.getSession().getAttribute(PagePath.USER);
-        if(user == null || !user.getRoleEnum().equals(RoleEnum.ADMIN))  {
+        if(user != null && !user.getRoleEnum().equals(RoleEnum.ADMIN))  {
             RequestDispatcher dispatcher =
                     request.getServletContext().getRequestDispatcher("/index.jsp");
             dispatcher.forward(request, response);

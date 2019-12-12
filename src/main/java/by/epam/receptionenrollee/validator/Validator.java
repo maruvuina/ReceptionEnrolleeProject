@@ -3,7 +3,10 @@ package by.epam.receptionenrollee.validator;
 import by.epam.receptionenrollee.entity.Enrollee;
 import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
+import by.epam.receptionenrollee.exception.ServiceException;
+import by.epam.receptionenrollee.mail.GoogleMail;
 import by.epam.receptionenrollee.logic.SessionRequestContent;
+import by.epam.receptionenrollee.manager.DatabaseManager;
 import by.epam.receptionenrollee.resource.ConfigurationManager;
 import by.epam.receptionenrollee.resource.MessageManager;
 import by.epam.receptionenrollee.service.EducationInformation;
@@ -35,33 +38,89 @@ public class Validator {
         String login = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
         String password = sessionRequestContent.getParameter(PARAM_NAME_PASSWORD);
         String userLocale = sessionRequestContent.getUserLocale();
-        User user = userService.getUserByEmailPassword(login, password);
-        if (isLoginParamsValid(login, password) && user != null) {
-            RoleEnum userRole = user.getRoleEnum();
-            if (!(userRole == null || userRole.equals(RoleEnum.UNKNOWN))) {
-                if (userRole.equals(RoleEnum.ADMIN)) {
-                    sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
-                    sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
-                    page = ConfigurationManager.getProperty(ADMIN);
-                } else if (userRole.equals(RoleEnum.USER)) {
-                    sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
-                    sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
-                    enrolleeInformationAfterLogin(sessionRequestContent, user);
-                    page = ConfigurationManager.getProperty(USER);
+        try {
+            User user = userService.getUserByEmailPassword(login, password);
+            if (isLoginParamsValid(login, password) && user != null) {
+                RoleEnum userRole = user.getRoleEnum();
+                if (!(userRole == null || userRole.equals(RoleEnum.UNKNOWN))) {
+                    if (userRole.equals(RoleEnum.ADMIN)) {
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_USER_FIRST_NAME, user.getFirstName());
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_USER_LAST_NAME, user.getLastName());
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
+                        page = ConfigurationManager.getProperty(ADMIN);
+                    } else if (userRole.equals(RoleEnum.USER)) {
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
+                        enrolleeInformationAfterLogin(sessionRequestContent, user);
+                        page = ConfigurationManager.getProperty(USER);
+                    }
+                } else {
+                    sessionRequestContent.setRequestAttribute(
+                            PARAM_NAME_ERROR_UNKNOWN_USER, new MessageManager(userLocale)
+                                    .getProperty("message.unknown_user"));
+                    page = ConfigurationManager.getProperty(LOGIN);
                 }
             } else {
                 sessionRequestContent.setRequestAttribute(
-                        PARAM_NAME_ERROR_UNKNOWN_USER, new MessageManager(userLocale)
-                                .getProperty("message.unknown_user"));
+                        PARAM_NAME_ERROR_LOGIN_MESSAGE, new MessageManager(userLocale)
+                                .getProperty("message.loginerror"));
                 page = ConfigurationManager.getProperty(LOGIN);
             }
-        } else {
-            sessionRequestContent.setRequestAttribute(
-                    PARAM_NAME_ERROR_LOGIN_MESSAGE, new MessageManager(userLocale)
-                            .getProperty("message.loginerror"));
-            page = ConfigurationManager.getProperty(LOGIN);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while verified user page: ", e);
         }
         return page;
+    }
+
+    private boolean isValidAddressPart(String addressPart) {
+        return addressPart.matches(STRING_REGEX);
+    }
+
+    private boolean isValidAddress(SessionRequestContent sessionRequestContent) {
+        return isValidAddressPart(sessionRequestContent.getParameter(PARAM_NAME_DISTRICT)) &&
+                isValidAddressPart(sessionRequestContent.getParameter(PARAM_NAME_LOCALITY));
+    }
+
+    private boolean isValidSchoolMarks(SessionRequestContent sessionRequestContent) {
+        return sessionRequestContent
+                .getParametersByName(PARAM_NAME_SCHOOL_MARK)
+                .stream()
+                .allMatch(o -> o.matches(SCHOOL_MARK_REGEX));
+    }
+
+    private boolean isValidEntranceExaminationMark(String mark) {
+        return mark.matches(ENTRANCE_EXAMINATION_MARK_REGEX);
+    }
+
+    private boolean isValidEntranceExaminationMarks(SessionRequestContent sessionRequestContent) {
+        return isValidEntranceExaminationMark(sessionRequestContent.getParameter(PARAM_NAME_LANGUAGE_EXAM)) &&
+                isValidEntranceExaminationMark(sessionRequestContent.getParameter(PARAM_NAME_FIRST_PROFILE_EXAM)) &&
+                isValidEntranceExaminationMark(sessionRequestContent.getParameter(PARAM_NAME_SECOND_PROFILE_EXAM));
+    }
+
+    private boolean isValidDay(String day) {
+        return day.matches(DAY_REGEX);
+    }
+
+    private boolean isValidMonth(String month) {
+        return month.matches(MONTH_REGEX);
+    }
+
+    private boolean isValidYear(String year) {
+        return year.matches(YEAR_REGEX);
+    }
+
+    private boolean isValidBirthday(SessionRequestContent sessionRequestContent) {
+        return isValidDay(sessionRequestContent.getParameter(PARAM_NAME_DAY)) &&
+                isValidMonth(sessionRequestContent.getParameter(PARAM_NAME_MONTH)) &&
+                isValidYear(sessionRequestContent.getParameter(PARAM_NAME_YEAR));
+    }
+
+    private boolean isCompetitionRegisterParamsValid(SessionRequestContent sessionRequestContent) {
+        return isValidBirthday(sessionRequestContent) &&
+                isValidAddress(sessionRequestContent) &&
+                isValidSchoolMarks(sessionRequestContent) &&
+                isValidEntranceExaminationMarks(sessionRequestContent);
     }
 
     private boolean isLoginParamsValid(String login, String password) {
@@ -102,127 +161,140 @@ public class Validator {
         String userLocale = sessionRequestContent.getUserLocale();
         if (isRegisterParamsValid(sessionRequestContent)) {
             String email = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
-            //проверка полей на валидность
-            if (userService.verifyUserEmail(email)) {
-                User registeredUser = userService.registerUser(sessionRequestContent);
-                if (registeredUser != null) {
-                    sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, registeredUser);
-                    sessionRequestContent.setSessionAttribute(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER, email);
-                    page = ConfigurationManager.getProperty(COMPITITION_REGISTER);
+            try {
+                if (userService.verifyUserEmail(email)) {
+                    User registeredUser = userService.registerUser(sessionRequestContent);
+                    if (registeredUser != null) {
+                        sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, registeredUser);
+                        sessionRequestContent.setSessionAttribute(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER, email);
+                        page = ConfigurationManager.getProperty(COMPITITION_REGISTER);
+                    }
+                } else {
+                    sessionRequestContent.setRequestAttribute(
+                            PARAM_NAME_ERROR_EMAIL_EXISTS_MESSAGE,
+                            new MessageManager(userLocale).getProperty("message.register.error.email"));
+                    page = ConfigurationManager.getProperty(GO_TO_REGISTER);
+                    logger.log(Level.WARN, "User with such email: \"" + email + "\" already exists");
                 }
-            } else {
-                sessionRequestContent.setRequestAttribute(
-                        PARAM_NAME_ERROR_EMAIL_EXISTS_MESSAGE,
-                        new MessageManager(userLocale).getProperty("message.register.error.email"));
-                page = ConfigurationManager.getProperty(GO_TO_REGISTER);
+            } catch (ServiceException e) {
+                logger.log(Level.ERROR, "Error while get compitition register page: ", e);
             }
         } else {
+            setErrorRegisterMessage(sessionRequestContent, userLocale);
+            page = ConfigurationManager.getProperty(GO_TO_REGISTER);
             logger.log(Level.ERROR, "Parameters are not valid.");
         }
         return page;
     }
 
+    private void setErrorRegisterMessage(SessionRequestContent sessionRequestContent, String userLocale) {
+        sessionRequestContent.setRequestAttribute(
+                PARAM_NAME_ERROR_INVALIDATE_REGISTER_FIELDS,
+                new MessageManager(userLocale).getProperty("message.register.error.invalid_fields"));
+    }
+
     public String getRegisterEnrolleePage(SessionRequestContent sessionRequestContent) {
-        String page;
+        String page = null;
         String userLocale = sessionRequestContent.getUserLocale();
-        System.out.println("EMAIL enrollee-----> " + sessionRequestContent.getSessionParameter(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER));
-        Enrollee enrollee = enrolleeService.registerEnrollee(sessionRequestContent);
-        //System.out.println("REGISTED enrollee-----> " + enrollee.toString());
-        User user = userService.getUserById(enrollee.getIdUser());
-        RoleEnum userRole = user.getRoleEnum();
-        //проверка полей на валидность вместо null
-        if (enrollee != null) {
-            sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
-            sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
-            sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEE, enrollee);
-            enrolleeInformation(sessionRequestContent, enrollee);
-            page = ConfigurationManager.getProperty(USER);
+        if (isCompetitionRegisterParamsValid(sessionRequestContent)) {
+            try {
+                Enrollee enrollee = enrolleeService.registerEnrollee(sessionRequestContent);
+                User user = userService.getUserById(enrollee.getIdUser());
+                RoleEnum userRole = user.getRoleEnum();
+                sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
+                sessionRequestContent.setRequestAttribute(PARAM_NAME_ROLE, userRole);
+                sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEE, enrollee);
+                enrolleeInformation(sessionRequestContent, enrollee);
+                page = ConfigurationManager.getProperty(USER);
+            } catch (ServiceException e) {
+                logger.log(Level.ERROR, "Error while get register enrollee page: ", e);
+            }
         } else {
-            //другой message
-            sessionRequestContent.setRequestAttribute(
-                    PARAM_NAME_ERROR_EMAIL_EXISTS_MESSAGE,
-                    new MessageManager(userLocale).getProperty("message.register.error.email"));
-            page = ConfigurationManager.getProperty(COMPITITION_REGISTER);
+            setErrorRegisterMessage(sessionRequestContent, userLocale);
+            page = ConfigurationManager.getProperty(GO_TO_REGISTER);
+            logger.log(Level.ERROR, "Parameters are not valid.");
         }
         return page;
     }
 
-    private void enrolleeInformation(SessionRequestContent sessionRequestContent, Enrollee enrollee) {
+    private void enrolleeInformation(SessionRequestContent sessionRequestContent, Enrollee enrollee) throws ServiceException {
         String avatar = enrolleeService.getEnrolleeAvatar(enrollee.getAvatar());
         sessionRequestContent.setRequestAttribute(PARAM_NAME_AVATAR, avatar);
         EducationInformation educationInformation = enrolleeService.getEnrolleeEducationInformation(sessionRequestContent, enrollee.getIdSpeciality());
         sessionRequestContent.setRequestAttribute(PARAM_NAME_EDUCATION_INFORMATION, educationInformation);
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_FACULTY, education.get(0));
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_SPECIALITY, education.get(1));
-//        List<Integer> scoreRating = enrolleeService.getScoreRating(enrollee.getId(), education.get(0));
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_SCORE, scoreRating.get(2));
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_RATING, scoreRating.get(0));
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_WHOLE_RATING, scoreRating.get(1));
     }
 
-    private void enrolleeInformationAfterLogin(SessionRequestContent sessionRequestContent, User user) {
+    private void enrolleeInformationAfterLogin(SessionRequestContent sessionRequestContent, User user) throws ServiceException {
         Enrollee enrollee = enrolleeService.getEnrollee(user);
         sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEE, enrollee);
         enrolleeInformation(sessionRequestContent, enrollee);
     }
 
+    private boolean isValidFacultyName(SessionRequestContent sessionRequestContent) {
+        return sessionRequestContent
+                .getParameter(PARAM_NAME_ENROLLEE_FACULTY)
+                .matches(STRING_REGEX);
+    }
+
     public String getEnrolleesByFacultyPage(SessionRequestContent sessionRequestContent) {
-        String page;
+        String page = null;
         String userLocale = sessionRequestContent.getUserLocale();
-        Map<Enrollee, EducationInformation> informationMap = enrolleeService.getInformationAboutEnrolleesByConcreteFaculty(sessionRequestContent);
-        //List<Enrollee> enrollees = enrolleeService.getListOfEnrolleesByConcreteFaculty(sessionRequestContent);
-        //User user = userService.getUserByEmail(sessionRequestContent.getParameter(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER));
-        //RoleEnum userRole = user.getRoleEnum();
-        //проверка полей на валидность вместо null
-        System.out.println("**********************");
-        //enrollees.forEach(System.out::println);
-        System.out.println("**********************");
-        if (informationMap != null) {
-            //enrolleesInformation(sessionRequestContent, enrollees);
-            sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEES_INFORMATION_MAP, informationMap);
-            page = ConfigurationManager.getProperty(ENROLLEES_BY_FACULTY);
+        Map<Enrollee, EducationInformation> informationMap;
+        if (isValidFacultyName(sessionRequestContent)) {
+            try {
+                informationMap = enrolleeService.getInformationAboutEnrolleesByConcreteFaculty(sessionRequestContent);
+                sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+                sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+                sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+                sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEES_INFORMATION_MAP, informationMap);
+                page = ConfigurationManager.getProperty(ENROLLEES_BY_FACULTY);
+            } catch (ServiceException e) {
+                logger.log(Level.ERROR, "Error while get enrollees by faculty page: ", e);
+            }
         } else {
-            //другой message
             sessionRequestContent.setRequestAttribute(
-                    PARAM_NAME_ERROR_EMAIL_EXISTS_MESSAGE,
-                    new MessageManager(userLocale).getProperty("message.register.error.email"));
+                    PARAM_NAME_ERROR_INVALID_FACULTY_NAME,
+                    new MessageManager(userLocale).getProperty("message.admin.error.invalid_faculty"));
             page = ConfigurationManager.getProperty(ADMIN);
         }
         return page;
     }
-//    private void infoAboutEnrolleesForAdmin(SessionRequestContent sessionRequestContent) {
-//        List<Enrollee> enrollees = enrolleeService.getListOfEnrollees();
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEES_LIST, enrollees);
-//        List<String> faculties =
-//                enrolleeService
-//                        .getFacultiesOrSpecialitiesForEnrollees(enrollees, PARAM_NAME_FACULTY);
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_FACULTIES, faculties);
-//        List<String> specialities =
-//                enrolleeService
-//                        .getFacultiesOrSpecialitiesForEnrollees(enrollees, PARAM_NAME_SPECIALITY);
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_SPECIALITIES, specialities);
-//        List<Integer> scores =
-//                enrolleeService.getScoreForEachEnrollee(enrollees);
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_SCORES, scores);
-//        List<Integer> positions =
-//                enrolleeService.getRatingForEachEnrollee(enrollees, "position");
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_POSITIONS, positions);
-//        List<Integer> allSizeOfCurrentEnrollees =
-//                enrolleeService.getRatingForEachEnrollee(enrollees, "all_size");
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_ALL_SIZE_OF_CURRENT_ENROLLEES, allSizeOfCurrentEnrollees);
-//        List<Integer> facultyPlan =
-//                enrolleeService.getRatingForEachEnrollee(enrollees, "faculty_plan");
-//        sessionRequestContent.setRequestAttribute(PARAM_NAME_FACULTY_PLAN, facultyPlan);
-////        List<Boolean> statuses = enrolleeService.getStatusForEachEnrollee(enrollees, faculties);
-////        List<String> entered = new ArrayList<>();
-////        for (Boolean status: statuses) {
-////            if (status) {
-////                entered.add("Entered");
-////            }
-////            else {
-////                entered.add("No entered");
-////            }
-////        }
-////        request.setAttribute("status", entered);
-//    }
+
+    public String getPageToNotifyEnrollee(SessionRequestContent sessionRequestContent) {
+        String page = null;
+        String enrolleeEmail = sessionRequestContent.getParameter(PARAM_NAME_ENROLLEE_EMAIL);
+        sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+        sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+        sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+        sessionRequestContent.setSessionAttribute(PARAM_NAME_ENROLLEE_EMAIL, enrolleeEmail);
+        try {
+            EducationInformation educationInformation = userService.getInformationToNotifyEnrollee(enrolleeEmail);
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_EDUCATION_INFORMATION, educationInformation);
+            page = ConfigurationManager.getProperty(NOTIFICATION_ENROLLEE);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while trying get page to notify enrollee: ", e);
+        }
+        return page;
+    }
+
+    public String getPageAfterSendingMessageToEnrollee(SessionRequestContent sessionRequestContent) {
+        String page;
+        String userLocale = sessionRequestContent.getUserLocale();
+        String adminEmail = sessionRequestContent.getParameter(PARAM_NAME_ADMIN_EMAIL);
+        String enrolleeEmail = sessionRequestContent.getParameter(PARAM_NAME_ENROLLEE_EMAIL);
+        if (isValidEmail(adminEmail) && isValidEmail(enrolleeEmail)) {
+            String title = sessionRequestContent.getParameter(PARAM_NAME_MESSAGE_SUBJECT);
+            String message = sessionRequestContent.getParameter(PARAM_NAME_MESSAGE);
+            GoogleMail googleMail = new GoogleMail(adminEmail, DatabaseManager.getProperty(DatabaseManager.PASSWORD), title, enrolleeEmail, message);
+            googleMail.sendNotificationToEnrollee();
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+            page = ConfigurationManager.getProperty(ADMIN);
+        } else {
+            setErrorRegisterMessage(sessionRequestContent, userLocale);
+            page = ConfigurationManager.getProperty(NOTIFICATION_ENROLLEE);
+        }
+        return page;
+    }
 }

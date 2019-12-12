@@ -4,10 +4,9 @@ import by.epam.receptionenrollee.dao.impl.*;
 import by.epam.receptionenrollee.dao.pool.EntityTransaction;
 import by.epam.receptionenrollee.entity.*;
 import by.epam.receptionenrollee.exception.DaoException;
+import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.factory.DaoFactory;
 import by.epam.receptionenrollee.logic.SessionRequestContent;
-import by.epam.receptionenrollee.util.LanguageParam;
-import by.epam.receptionenrollee.util.Translator;
 import by.epam.receptionenrollee.util.TranslatorDataType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -22,9 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static by.epam.receptionenrollee.command.RequestParam.*;
-import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_PRE_CONSCRIPTION_MED_TRAINING;
 import static by.epam.receptionenrollee.validator.StringUtil.getCurrentDateTime;
 import static by.epam.receptionenrollee.validator.StringUtil.randomString;
 import static java.util.stream.Collectors.toMap;
@@ -67,26 +66,8 @@ public class EnrolleeService {
         return uploadFileDir + fileName;
     }
 
-    //TODO
     private List<String> getSchoolSubjectMarks(SessionRequestContent sessionRequestContent) {
-        List<String> schoolSubjectMarks = new ArrayList<>();
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_BELARUSIAN_LANGUAGE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_BELARUSIAN_LITERATURE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_RUSSIAN_LANGUAGE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_RUSSIAN_LITERATURE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_FOREIGN_LANGUAGE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_MATHS));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_INFORMATICS));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_HISTORY_OF_BELARUS));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_WORLD_HISTORY));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_SOCIAL_SCIENCE));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_GEOGRAPHY));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_BIOLOGY));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_PHYSICS));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_ASTRONOMY));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_CHEMISTRY));
-        schoolSubjectMarks.add(sessionRequestContent.getParameter(PARAM_NAME_PRE_CONSCRIPTION_MED_TRAINING));
-        return schoolSubjectMarks;
+        return sessionRequestContent.getParametersByName(PARAM_NAME_SCHOOL_MARK);
     }
 
     private boolean registerEnrolleeEntranceExamination(ServiceParam serviceParam)
@@ -137,8 +118,8 @@ public class EnrolleeService {
         return newEnrollee;
     }
 
-    public Enrollee registerEnrollee(SessionRequestContent sessionRequestContent) {
-        Enrollee newEnrollee = null;
+    public Enrollee registerEnrollee(SessionRequestContent sessionRequestContent) throws ServiceException {
+        Enrollee newEnrollee;
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
         EntranceExaminationDaoImpl entranceExaminationDaoImpl = DaoFactory.getInstance().getEntranceExaminationDao();
         SchoolMarkDaoImpl schoolMarkDaoImpl = DaoFactory.getInstance().getSchoolMarkDao();
@@ -153,8 +134,7 @@ public class EnrolleeService {
                     new ServiceParam(sessionRequestContent, enrolleeDaoImpl,
                             entranceExaminationDaoImpl, schoolMarkDaoImpl, schoolSubjectDaoImpl,
                             userDaoImpl, specialityDaoImpl);
-            String email = sessionRequestContent.getSessionParameter(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER);
-            System.out.println("registerEnrollee---> " + email);
+            String email = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
             User user = userDaoImpl.findUserByEmail(email);
             String userSpeciality = serviceParam
                     .getEnrolleeEducationParameter(sessionRequestContent
@@ -169,17 +149,19 @@ public class EnrolleeService {
         } catch (DaoException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error while trying register enrollee: ", e);
+            throw new ServiceException(e);
         } catch (SQLException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error in sql when register enrollee: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
         return newEnrollee;
     }
 
-    public Enrollee getEnrollee(User user) {
-        Enrollee enrollee = null;
+    public Enrollee getEnrollee(User user) throws ServiceException {
+        Enrollee enrollee;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
         EntityTransaction transaction = new EntityTransaction();
@@ -192,7 +174,7 @@ public class EnrolleeService {
         } catch (DaoException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error while trying to get enrollee info:  ", e);
-            //throw new ServiceException(e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
@@ -234,33 +216,29 @@ public class EnrolleeService {
         return educationInformation;
     }
 
-
-    public EducationInformation getEnrolleeEducationInformation(SessionRequestContent sessionRequestContent, int idEnrolleeSpeciality) {
+    public EducationInformation getEnrolleeEducationInformation(SessionRequestContent sessionRequestContent, int idEnrolleeSpeciality) throws ServiceException {
         SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
-        SchoolMarkDaoImpl schoolMarkDaoImpl = DaoFactory.getInstance().getSchoolMarkDao();
-        EntranceExaminationDaoImpl entranceExaminationDaoImpl = DaoFactory.getInstance().getEntranceExaminationDao();
+
         FacultyDaoImpl facultyDaoImpl = DaoFactory.getInstance().getFacultyDao();
         EntityTransaction transaction = new EntityTransaction();
-        transaction.begin(specialityDaoImpl, enrolleeDaoImpl, schoolMarkDaoImpl,
-                entranceExaminationDaoImpl, facultyDaoImpl);
-        ServiceParam serviceParam = new ServiceParam(sessionRequestContent, enrolleeDaoImpl,
-                entranceExaminationDaoImpl, schoolMarkDaoImpl, specialityDaoImpl, facultyDaoImpl);
+        transaction.begin(specialityDaoImpl, enrolleeDaoImpl, facultyDaoImpl);
+        ServiceParam serviceParam = new ServiceParam(sessionRequestContent, enrolleeDaoImpl, specialityDaoImpl, facultyDaoImpl);
         serviceParam.setIdUserSpeciality(idEnrolleeSpeciality);
-        EducationInformation educationInformation = null;
+        EducationInformation educationInformation;
         try {
             educationInformation = getEducationInformation(serviceParam);
         } catch (DaoException e) {
             logger.log(Level.ERROR, "Error while getting education for single enrollee: ", e);
+            throw new ServiceException(e);
         }
         return educationInformation;
     }
 
     private int getEnrolleeScore(ServiceParam serviceParam) throws DaoException {
         int idEnrollee = serviceParam.getIdEnrollee();
-        double avgSchoolMark = serviceParam.getSchoolMarkDaoImpl().getAvgSchoolMarkByEnrolleeId(idEnrollee);
-        int sumExam = serviceParam.getEntranceExaminationDaoImpl().getSumExaminationByEnrolleeId(idEnrollee);
-        return (int) (avgSchoolMark + sumExam);
+        return serviceParam.getEnrolleeDaoImpl()
+                .getEnrolleeScoreByEnrolleeId(idEnrollee);
     }
 
     private int getEnrolleeScoreByIdEnrollee(ServiceParam serviceParam, int idEnrollee) throws DaoException {
@@ -280,12 +258,21 @@ public class EnrolleeService {
     }
 
     private void educationEnrolleePosition(EducationInformation educationInformation,
-                                                       ServiceParam serviceParam) throws DaoException { ;
+                                                       ServiceParam serviceParam) throws DaoException {
         int idEnrollee = serviceParam.getIdEnrollee();
         String facultyName = serviceParam.getFacultyName();
         EnrolleeDaoImpl enrolleeDaoImpl = serviceParam.getEnrolleeDaoImpl();
         SpecialityDaoImpl specialityDaoImpl = serviceParam.getSpecialityDaoImpl();
-        List<Integer> enrolleesId = enrolleeDaoImpl.getEnrolleesIdByFacultyName(facultyName);
+        List<Integer> enrolleesId;
+        if (serviceParam.getEnrollees() != null) {
+            enrolleesId = serviceParam
+                    .getEnrollees()
+                    .stream()
+                    .map(Enrollee::getId)
+                    .collect(Collectors.toList());
+        } else {
+            enrolleesId = enrolleeDaoImpl.getEnrolleesIdByFacultyName(facultyName);
+        }
         Map<Integer, Integer> enrollees = new HashMap<>();
         for (Integer enrolleeId : enrolleesId) {
             enrollees.put(enrolleeId, getEnrolleeScoreByIdEnrollee(serviceParam, enrolleeId));
@@ -298,9 +285,6 @@ public class EnrolleeService {
     }
 
     private String getTranslatedFacultyName(ServiceParam serviceParam) throws DaoException {
-        System.out.println("from getTranslatedFacultyName --> " + serviceParam.getSessionRequestContent()
-                .getParameter(PARAM_NAME_ENROLLEE_FACULTY));
-
         String facultyNameToTranslate = serviceParam.getSessionRequestContent()
                 .getParameter(PARAM_NAME_ENROLLEE_FACULTY);
         String enrolleeFaculty;
@@ -315,29 +299,32 @@ public class EnrolleeService {
         return enrolleeFaculty;
     }
 
-    public Map<Enrollee, EducationInformation> getInformationAboutEnrolleesByConcreteFaculty(SessionRequestContent sessionRequestContent) {
+    public Map<Enrollee, EducationInformation> getInformationAboutEnrolleesByConcreteFaculty(SessionRequestContent sessionRequestContent) throws ServiceException {
         Map<Enrollee, EducationInformation> informationMap = new HashMap<>();
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
-        //Faculty
         SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
-        SchoolMarkDaoImpl schoolMarkDaoImpl = DaoFactory.getInstance().getSchoolMarkDao();
-        EntranceExaminationDaoImpl entranceExaminationDaoImpl = DaoFactory.getInstance().getEntranceExaminationDao();
+        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
-        transaction.begin(enrolleeDaoImpl, specialityDaoImpl,
-                schoolMarkDaoImpl, entranceExaminationDaoImpl);
+        transaction.begin(enrolleeDaoImpl, specialityDaoImpl, userDaoImpl);
         ServiceParam serviceParam =
-                new ServiceParam(sessionRequestContent, enrolleeDaoImpl, entranceExaminationDaoImpl,
-                        schoolMarkDaoImpl, specialityDaoImpl);
+                new ServiceParam(sessionRequestContent, enrolleeDaoImpl, specialityDaoImpl);
         try {
             List<Enrollee> enrollees = getListOfEnrolleesByConcreteFaculty(serviceParam);
+            serviceParam.setEnrollees(enrollees);
             for (Enrollee enrollee : enrollees) {
+                User user = userDaoImpl.findUserFirstLastNameEmailByUserId(enrollee.getIdUser());
                 serviceParam.setIdUserSpeciality(enrollee.getIdSpeciality());
-                informationMap.put(enrollee, getEducationInformation(serviceParam));
+                EducationInformation information = getEducationInformation(serviceParam);
+                information.setEnrolleeFirstName(user.getFirstName());
+                information.setEnrolleeLastName(user.getLastName());
+                information.setEnrolleeEmail(user.getEmail());
+                informationMap.put(enrollee, information);
             }
             transaction.commit();
         } catch (DaoException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error while rollback get information education about enrollees: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
@@ -346,9 +333,7 @@ public class EnrolleeService {
 
     private List<Enrollee> getListOfEnrolleesByConcreteFaculty(ServiceParam serviceParam) throws DaoException {
         EnrolleeDaoImpl enrolleeDaoImpl = serviceParam.getEnrolleeDaoImpl();
-        System.out.println("FROM getListOfEnrolleesByConcreteFaculty ---");
         String facultyName = getTranslatedFacultyName(serviceParam);
-        System.out.println("FACULTYNAME TRANSLA -- > " + facultyName);
         List<Enrollee> enrolleeList = enrolleeDaoImpl.getEnrolleesByFacultyName(facultyName);
         getAvatarsForAllEnrollees(enrolleeList);
         return enrolleeList;
@@ -359,156 +344,4 @@ public class EnrolleeService {
             enrollee.setAvatar(getEnrolleeAvatar(enrollee.getAvatar()));
         }
     }
-
-//    public List<EducationInformation> getEducationInformationEnrollees(List<Enrollee> enrollees, SessionRequestContent sessionRequestContent) {
-//        List<EducationInformation> educationInformationList = new ArrayList<>();
-//        for (Enrollee enrollee : enrollees) {
-//            educationInformationList.add(getEnrolleeEducationInformation(sessionRequestContent, enrollee));
-//        }
-//        return educationInformationList;
-//    }
-
-//    private Map<Integer, Map<String, String>> getFacultiesWithSpecialitiesForAllEnrollees(
-//            List<Enrollee> enrollees) {
-//        Map<Integer, Map<String, String>> education = new HashMap<>();
-//        SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
-//        EntityTransaction transaction = new EntityTransaction();
-//        transaction.begin(specialityDaoImpl);
-//        try {
-//            for (Enrollee enrollee: enrollees) {
-//                education.put(
-//                        enrollee.getId(),
-//                        getEnrolleeFacultySpeciality(
-//                                enrollee.getIdSpeciality(), specialityDaoImpl)
-//                );
-//            }
-//            transaction.commit();
-//        } catch (DaoException e) {
-//            transaction.rollback();
-//            logger.log(Level.ERROR, "Error while rollback get faculties with specialities: ", e);
-//        } finally {
-//            transaction.end();
-//        }
-//        return education;
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-//    public boolean isEnteredToUniversity(int idEnrollee, String facultyName) {
-//        int enrollePosition =
-//                getScoreRating(idEnrollee, facultyName).get(0);
-//        int facultyPlan = 0;
-//        SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
-//        EntityTransaction transaction = new EntityTransaction();
-//        transaction.begin(specialityDaoImpl);
-//        try {
-//            facultyPlan = getFacultyPlanByFacultyName(facultyName, specialityDaoImpl);
-//            transaction.commit();
-//        } catch (DaoException e) {
-//            transaction.rollback();
-//            logger.log(Level.ERROR, "Error while rollback check entered to university: ", e);
-//        } finally {
-//            transaction.end();
-//        }
-//        return enrollePosition <= facultyPlan;
-//    }
-
-
-
-//    public List<String> getFacultiesOrSpecialitiesForEnrollees(List<Enrollee> enrollees, String key) {
-//        Map<Integer, Map<String, String>> education =
-//                getFacultiesWithSpecialitiesForAllEnrollees(enrollees);
-//        List<String> listOfSpecifiedEducation = new ArrayList<>();
-//        for (Enrollee enrollee: enrollees) {
-//            switch (key.toUpperCase()) {
-//                case "FACULTY":
-//                    listOfSpecifiedEducation
-//                            .add(education.get(enrollee.getId()).get("faculty"));
-//                    break;
-//                case "SPECIALITY":
-//                    listOfSpecifiedEducation
-//                            .add(education.get(enrollee.getId()).get("speciality"));
-//                    break;
-//            }
-//        }
-//        return listOfSpecifiedEducation;
-//    }
-//
-//    public List<Integer> getScoreForEachEnrollee(List<Enrollee> enrollees) {
-//        List<Integer> scores = new ArrayList<>();
-//        SchoolMarkDaoImpl schoolMarkDaoImpl = DaoFactory.getInstance().getSchoolMarkDao();
-//        EntranceExaminationDaoImpl entranceExaminationDaoImpl = DaoFactory.getInstance().getEntranceExaminationDao();
-//        EntityTransaction transaction = new EntityTransaction();
-//        transaction.begin(schoolMarkDaoImpl, entranceExaminationDaoImpl);
-//        try {
-//            for (Enrollee enrollee: enrollees) {
-//                scores.add(getEnrolleeScore(enrollee.getId(), schoolMarkDaoImpl, entranceExaminationDaoImpl));
-//            }
-//            transaction.commit();
-//        } catch (DaoException e) {
-//            transaction.rollback();
-//            logger.log(Level.ERROR, "Error while trying to get score for each enrollee: ", e);
-//        } finally {
-//            transaction.end();
-//        }
-//        return scores;
-//    }
-//
-//    public List<Integer> getRatingForEachEnrollee(List<Enrollee> enrollees, String key) {
-//        List<Integer> ratings = new ArrayList<>();
-//        List<String> faculties = getFacultiesOrSpecialitiesForEnrollees(enrollees, "faculty");
-//        EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
-//        SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
-//        SchoolMarkDaoImpl schoolMarkDaoImpl = DaoFactory.getInstance().getSchoolMarkDao();
-//        EntranceExaminationDaoImpl entranceExaminationDaoImpl = new EntranceExaminationDaoImpl();
-//        EntityTransaction transaction = new EntityTransaction();
-//        transaction.begin(enrolleeDaoImpl, specialityDaoImpl, schoolMarkDaoImpl, entranceExaminationDaoImpl);
-//        try {
-//            for (int i = 0; i < enrollees.size(); i++) {
-//                switch (key.toUpperCase()) {
-//                    case "POSITION":
-//                        ratings.add(getEnrolleeRating(
-//                                faculties.get(i), enrollees.get(i).getId(),
-//                                enrolleeDaoImpl, schoolMarkDaoImpl, entranceExaminationDaoImpl).get(0));
-//                        break;
-//                    case "ALL_SIZE":
-//                        ratings.add(getEnrolleeRating(
-//                                faculties.get(i), enrollees.get(i).getId(),
-//                                enrolleeDaoImpl, schoolMarkDaoImpl, entranceExaminationDaoImpl).get(1));
-//                        break;
-//                    case "FACULTY_PLAN":
-//                        ratings.add(getFacultyPlanByFacultyName(faculties.get(i), specialityDaoImpl));
-//                        break;
-//                }
-//            }
-//            transaction.commit();
-//        } catch (DaoException e) {
-//            transaction.rollback();
-//            logger.log(Level.ERROR, "Error while rollback ger rating for each enrollee: ", e);
-//        } finally {
-//            transaction.end();
-//        }
-//        return ratings;
-//    }
-//
-//    public List<Boolean> getStatusForEachEnrollee(List<Enrollee> enrollees, List<String> faculties) {
-//        List<Boolean> statuses = new ArrayList<>();
-//        for (int i = 0; i < enrollees.size(); i++) {
-//            boolean isEntered =
-//                    isEnteredToUniversity(enrollees.get(i).getId(), faculties.get(i));
-//            statuses.add(isEntered);
-//        }
-//        return statuses;
-//    }
-//
-
 }

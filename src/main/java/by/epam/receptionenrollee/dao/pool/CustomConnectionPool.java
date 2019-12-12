@@ -1,7 +1,7 @@
 package by.epam.receptionenrollee.dao.pool;
 
 import by.epam.receptionenrollee.dao.DatabaseProperties;
-import by.epam.receptionenrollee.dao.manager.DatabaseManager;
+import by.epam.receptionenrollee.manager.DatabaseManager;
 import by.epam.receptionenrollee.exception.PoolException;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;

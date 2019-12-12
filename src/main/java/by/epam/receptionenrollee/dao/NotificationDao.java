@@ -29,7 +29,7 @@ public interface NotificationDao {
      * @param notification - Notification to add in Database
      * @return true if operation success and false if fails
      */
-    boolean insertNotification(Notification notification);
+    boolean insertNotification(Notification notification) throws DaoException;
 
     /**
      * Updates notification in Database

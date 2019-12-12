@@ -32,7 +32,6 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     };
 
     private Mapper<Enrollee, PreparedStatement> mapperToDatabase = (Enrollee enrollee, PreparedStatement preparedStatement) -> {
-        //preparedStatement.setInt(1, enrollee.getId());
         preparedStatement.setInt(1, enrollee.getIdUser());
         preparedStatement.setInt(2, enrollee.getIdSpeciality());
         preparedStatement.setDate(3, Date.valueOf(enrollee.getBirthday()));
@@ -119,5 +118,20 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
             throw new DaoException(e);
         }
         return enrollees;
+    }
+
+    public int getEnrolleeScoreByEnrolleeId(int idEnrollee) throws DaoException {
+        int score = 0;
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_SCORE_BY_ID)) {
+            preparedStatement.setInt(1, idEnrollee);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                score = resultSet.getInt(ColumnLabel.COLUMN_LABEL_SCORE);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to get enrollee score by id: ", e);
+            throw new DaoException(e);
+        }
+        return score;
     }
 }

@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.util.*;
@@ -91,11 +90,6 @@ public class SessionRequestContent {
     public void updateRequestSession(HttpServletRequest request) {
         requestAttributes.forEach(request::setAttribute);
         requestParameters.forEach(request::setAttribute);
-        sessionAttributes = sessionAttributes
-                .entrySet()
-                .stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         sessionAttributes.forEach(request::setAttribute);
         if(isSessionInvalidate) {
             request.getSession().invalidate();
@@ -122,5 +116,9 @@ public class SessionRequestContent {
 
     public boolean isSessionInvalidate() {
         return isSessionInvalidate;
+    }
+
+    public List<String> getParametersByName(String paratersName) {
+        return Arrays.asList(request.getParameterValues(paratersName));
     }
 }

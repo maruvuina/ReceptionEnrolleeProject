@@ -29,6 +29,7 @@ public class ColumnLabel {
     public static final String COLUMN_LABEL_LOCALITY = "locality";
     public static final String COLUMN_LABEL_AVATAR = "avatar";
 
+    public static final String COLUMN_LABEL_SCORE = "score";
     public static final String COLUMN_LABEL_SUM_MARK = "sum_mark";
 
     public static final String COLUMN_LABEL_ID_SCHOOL_MARK = "id_school_mark";

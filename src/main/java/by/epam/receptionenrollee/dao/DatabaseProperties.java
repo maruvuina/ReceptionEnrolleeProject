@@ -1,9 +1,7 @@
 package by.epam.receptionenrollee.dao;
 
-import by.epam.receptionenrollee.dao.manager.DatabaseManager;
+import by.epam.receptionenrollee.manager.DatabaseManager;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class DatabaseProperties {

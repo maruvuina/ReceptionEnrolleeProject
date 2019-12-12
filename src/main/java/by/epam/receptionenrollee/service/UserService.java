@@ -5,6 +5,7 @@ import by.epam.receptionenrollee.dao.pool.EntityTransaction;
 import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
+import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.factory.DaoFactory;
 import by.epam.receptionenrollee.logic.SessionRequestContent;
 import by.epam.receptionenrollee.validator.HashUtil;
@@ -16,7 +17,7 @@ import static by.epam.receptionenrollee.command.RequestParam.*;
 public class UserService {
     private static final Logger logger = Logger.getLogger(UserService.class);
 
-    public boolean verifyUserEmail(String email) {
+    public boolean verifyUserEmail(String email) throws ServiceException {
         boolean isVerified;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
@@ -24,35 +25,18 @@ public class UserService {
         try {
             isVerified = userDaoImpl.isUserEmailUnique(email);
             transaction.commit();
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while verifing user email: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
         return isVerified;
     }
 
-//    public RoleEnum getUserRole(String login, String password) {
-//        RoleEnum roleEnum;
-//        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
-//        EntityTransaction transaction = new EntityTransaction();
-//        transaction.begin(userDaoImpl);
-//        try {
-//            if (userDaoImpl.getRoleByLoginPassword(login, password).equals(RoleEnum.ADMIN)) {
-//                roleEnum = RoleEnum.ADMIN;
-//            } else if (userDaoImpl.getRoleByLoginPassword(login, password).equals(RoleEnum.USER)) {
-//                roleEnum =  RoleEnum.USER;
-//            } else {
-//                roleEnum = RoleEnum.UNKNOWN;
-//            }
-//            transaction.commit();
-//        }
-//        finally {
-//            transaction.end();
-//        }
-//        return roleEnum;
-//    }
-
-    public User getUserByEmailPassword(String email, String password) {
-        User user = null;
+    public User getUserByEmailPassword(String email, String password) throws ServiceException {
+        User user;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(userDaoImpl);
@@ -61,13 +45,14 @@ public class UserService {
             transaction.commit();
         } catch (DaoException e) {
             logger.log(Level.ERROR, "Error while trying to get user: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
         return user;
     }
 
-    public User registerUser(SessionRequestContent sessionRequestContent) {
+    public User registerUser(SessionRequestContent sessionRequestContent) throws ServiceException {
         User newUser = new User();
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
@@ -85,27 +70,49 @@ public class UserService {
         } catch (DaoException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error while register: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
         return newUser;
     }
 
-    public User getUserById(int idUser) {
-        User user = null;
+    public User getUserById(int idUser) throws ServiceException {
+        User user;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(userDaoImpl);
         try {
             user = userDaoImpl.findUserById(idUser);
-            System.out.println("getUserById--> " + user.toString());
             transaction.commit();
         } catch (DaoException e) {
             logger.log(Level.ERROR, "Error while trying to get user by id: ", e);
+            throw new ServiceException(e);
         } finally {
             transaction.end();
         }
         return user;
     }
 
+    public EducationInformation getInformationToNotifyEnrollee(String email) throws ServiceException {
+        EducationInformation educationInformation;
+        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(userDaoImpl);
+        try {
+            educationInformation = userDaoImpl.findFirstLastNameSpecialityFacultyByEmail(email);
+            transaction.commit();
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while trying get information to notify enrollee: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+        return educationInformation;
+    }
+
+    public void sendMessageToEnrollee() {
+
+    }
 }

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_CURRENT_PAGE;
 
-//@WebFilter(urlPatterns = {"/*"})
+@WebFilter(urlPatterns = {"/*"})
 public class CurrentPageFilter implements Filter {
     private static final String REFERER = "referer";
     private static final String PATH_REGEX = "/controller.+";
@@ -39,7 +39,7 @@ public class CurrentPageFilter implements Filter {
             if (matcher.find()) {
                 path = matcher.group(0);
             } else {
-                path = PagePath.MAIN;
+                path = PagePath.LOGIN;
             }
         }
         return path;

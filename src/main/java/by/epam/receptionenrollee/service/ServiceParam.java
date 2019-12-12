@@ -1,10 +1,13 @@
 package by.epam.receptionenrollee.service;
 
 import by.epam.receptionenrollee.dao.impl.*;
+import by.epam.receptionenrollee.entity.Enrollee;
 import by.epam.receptionenrollee.logic.SessionRequestContent;
 import by.epam.receptionenrollee.util.LanguageParam;
 import by.epam.receptionenrollee.util.Translator;
 import by.epam.receptionenrollee.util.TranslatorDataType;
+
+import java.util.List;
 
 import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_ENROLLEE_FACULTY;
 
@@ -21,6 +24,7 @@ public class ServiceParam {
     private int idUserSpeciality;
     private int idEnrollee;
     private String facultyName;
+    private List<Enrollee> enrollees;
 
     public ServiceParam(){}
 
@@ -37,22 +41,16 @@ public class ServiceParam {
     }
 
     public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
-                        EntranceExaminationDaoImpl entranceExaminationDaoImpl, SchoolMarkDaoImpl schoolMarkDaoImpl,
                         SpecialityDaoImpl specialityDaoImpl) {
         this.sessionRequestContent = sessionRequestContent;
         this.enrolleeDaoImpl = enrolleeDaoImpl;
-        this.entranceExaminationDaoImpl = entranceExaminationDaoImpl;
-        this.schoolMarkDaoImpl = schoolMarkDaoImpl;
         this.specialityDaoImpl = specialityDaoImpl;
     }
 
     public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
-                        EntranceExaminationDaoImpl entranceExaminationDaoImpl, SchoolMarkDaoImpl schoolMarkDaoImpl,
                         SpecialityDaoImpl specialityDaoImpl, FacultyDaoImpl facultyDaoImpl) {
         this.sessionRequestContent = sessionRequestContent;
         this.enrolleeDaoImpl = enrolleeDaoImpl;
-        this.entranceExaminationDaoImpl = entranceExaminationDaoImpl;
-        this.schoolMarkDaoImpl = schoolMarkDaoImpl;
         this.specialityDaoImpl = specialityDaoImpl;
         this.facultyDaoImpl = facultyDaoImpl;
     }
@@ -147,6 +145,18 @@ public class ServiceParam {
 
     public FacultyDaoImpl getFacultyDaoImpl() {
         return facultyDaoImpl;
+    }
+
+    public void setUserDaoImpl(UserDaoImpl userDaoImpl) {
+        this.userDaoImpl = userDaoImpl;
+    }
+
+    public List<Enrollee> getEnrollees() {
+        return enrollees;
+    }
+
+    public void setEnrollees(List<Enrollee> enrollees) {
+        this.enrollees = enrollees;
     }
 
     public String getEnrolleeEducationParameter(String educationParameter, TranslatorDataType translatorDataType) {

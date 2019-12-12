@@ -4,9 +4,11 @@ import by.epam.receptionenrollee.dao.AbstractDao;
 import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.dao.UserDao;
+import by.epam.receptionenrollee.entity.Enrollee;
 import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
+import by.epam.receptionenrollee.service.EducationInformation;
 import by.epam.receptionenrollee.sql.SqlQuery;
 import by.epam.receptionenrollee.validator.HashUtil;
 import org.apache.log4j.Level;
@@ -16,8 +18,6 @@ import org.apache.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl extends AbstractDao<User> implements UserDao {
@@ -70,29 +70,6 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
         return deleteByValue(SqlQuery.USER_DELETE, user.getEmail());
     }
 
-//    public RoleEnum getRoleByLoginPassword(String login, String password) {
-//        RoleEnum result = RoleEnum.UNKNOWN;
-//        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ROLE_BY_LOGIN_PASSWORD);
-//            ResultSet resultSet = preparedStatement.executeQuery()) {
-//            List<User> users = new ArrayList<>();
-//            while (resultSet.next()) {
-//                String userNameDatabase = resultSet.getString(ColumnLabel.COLUMN_LABEL_EMAIL);
-//                String passwordDatabase = resultSet.getString(ColumnLabel.COLUMN_LABEL_PASSWORD);
-//                RoleEnum roleEnumDatabase = RoleEnum.valueOf(resultSet.getString(ColumnLabel.COLUMN_LABEL_ROLE).toUpperCase());
-//                users.add(new User(userNameDatabase, passwordDatabase, roleEnumDatabase));
-//            }
-//            for (User user : users) {
-//                if (login.equals(user.getEmail()) && HashUtil.isValidHash(password, user.getPassword())) {
-//                    result = user.getRoleEnum();
-//                }
-//            }
-//        }
-//        catch (SQLException e) {
-//            logger.log(Level.ERROR, "Error while trying get role by login and password: ", e);
-//        }
-//        return result;
-//    }
-
     @Override
     public User findUserByEmail(String email) throws DaoException {
         return findByValue(User.class, SqlQuery.FIND_USER_BY_EMAIL, email);
@@ -106,7 +83,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
         return null;
     }
 
-    public boolean isUserEmailUnique(String email) {
+    public boolean isUserEmailUnique(String email) throws DaoException {
         boolean isUnique = true;
         try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_ID_BY_EMAIL)) {
             preparedStatement.setString(1, email);
@@ -116,7 +93,45 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
             }
         } catch (SQLException e) {
             logger.log(Level.ERROR,"Error while trying checking user email uniqueness: ", e);
+            throw new DaoException(e);
         }
         return isUnique;
+    }
+    
+    public User findUserFirstLastNameEmailByUserId(int idUser) throws DaoException {
+        User user = new User();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_FIRST_LAST_NAME_EMAIL_BY_USER_ID)) {
+            preparedStatement.setInt(1, idUser);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                user.setFirstName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FIRST_NAME));
+                user.setLastName(resultSet.getString(ColumnLabel.COLUMN_LABEL_LAST_NAME));
+                user.setEmail(resultSet.getString(ColumnLabel.COLUMN_LABEL_EMAIL));
+            }
+        }
+        catch (SQLException e) {
+            logger.log(Level.ERROR, "Error while trying find user first, last name, email by user id: ", e);
+            throw new DaoException(e);
+        }
+        return user;
+    }
+
+    public EducationInformation findFirstLastNameSpecialityFacultyByEmail(String email) throws DaoException {
+        EducationInformation educationInformation = new EducationInformation();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_FIRST_LAST_NAME_SPECIALITY_FACULTY_BY_EMAIL)) {
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                educationInformation.setEnrolleeFirstName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FIRST_NAME));
+                educationInformation.setEnrolleeLastName(resultSet.getString(ColumnLabel.COLUMN_LABEL_LAST_NAME));
+                educationInformation.setSpecialityName(resultSet.getString(ColumnLabel.COLUMN_LABEL_SPECIALITY_NAME));
+                educationInformation.setFacultyName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FACULTY_NAME));
+            }
+        }
+        catch (SQLException e) {
+            logger.log(Level.ERROR, "Error while trying find first, last name, speciality, faculty name by email: ", e);
+            throw new DaoException(e);
+        }
+        return educationInformation;
     }
 }

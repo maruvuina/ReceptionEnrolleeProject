@@ -175,14 +175,11 @@ a .site-logo {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #777777;
-}
-
-.faculty-info-row-description a {
     color: #0B444D;
     text-decoration: none;
     text-transform: uppercase;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .faculty-info-row-description a:hover {
@@ -220,7 +217,7 @@ button:hover {
     width: 100%;
     height: 62px;
     border-radius: 3px;
-    background: #0B444D; /*97B7DE*/
+    background: #0B444D;
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -246,10 +243,7 @@ button:hover {
 .faculties li {
     padding: 40px 20px 30px 20px;
     left: 1.5em;
-    margin-top: 0.75em;
-    margin-bottom: 0.75em;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0.75em 20px;
 }
 
 .bottom-footer {

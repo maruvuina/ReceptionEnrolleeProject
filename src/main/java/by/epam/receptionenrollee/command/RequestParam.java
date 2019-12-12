@@ -5,10 +5,9 @@ public class RequestParam {
     public static final String PARAM_NAME_LANGUAGE_SITE = "language";
     public static final String PARAM_NAME_CURRENT_PAGE = "current";
 
-    public static final String PARAM_NAME_USERNAME = "username";
     public static final String PARAM_NAME_LOGIN = "login";
     public static final String PARAM_NAME_PASSWORD = "password";
-    public static final String PARAM_NAME_ROLE = "role";
+    public static final String PARAM_NAME_ROLE = "userRole";
 
     public static final String PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER = "loginFromCompititionRegister";
 
@@ -20,22 +19,18 @@ public class RequestParam {
     public static final String PARAM_NAME_USER = "user";
     public static final String PARAM_NAME_ENROLLEE = "enrollee";
     public static final String PARAM_NAME_AVATAR = "avatar";
+    public static final String PARAM_NAME_ENROLLEE_EMAIL = "enrolleeEmail";
+    public static final String PARAM_NAME_ADMIN_EMAIL = "adminEmail";
 
     public static final String PARAM_NAME_ERROR_LOGIN_MESSAGE = "errorLoginPassMessage";
     public static final String PARAM_NAME_ERROR_EMAIL_EXISTS_MESSAGE = "errorEmailExistsMessage";
     public static final String PARAM_NAME_ERROR_UNKNOWN_USER = "unknownUser";
-
-    public static final String PARAM_NAME_SCORE = "score";
-    public static final String PARAM_NAME_RATING = "rating";
-    public static final String PARAM_NAME_WHOLE_RATING = "wholerating";
+    public static final String PARAM_NAME_ERROR_INVALIDATE_REGISTER_FIELDS = "invalidateRegisterFields";
+    public static final String PARAM_NAME_ERROR_INVALID_FACULTY_NAME = "invalidateFacultyName";
 
     public static final String PARAM_NAME_ENROLLEES_INFORMATION_MAP = "enrolleesInformationMap";
-    public static final String PARAM_NAME_FACULTIES = "faculties";
-    public static final String PARAM_NAME_SPECIALITIES = "specialities";
-    public static final String PARAM_NAME_SCORES = "scores";
-    public static final String PARAM_NAME_POSITIONS = "positions";
-    public static final String PARAM_NAME_ALL_SIZE_OF_CURRENT_ENROLLEES = "allSizeOfCurrentEnrollees";
-    public static final String PARAM_NAME_FACULTY_PLAN = "facultyPlan";
+    public static final String PARAM_NAME_USER_FIRST_NAME = "userFirstName";
+    public static final String PARAM_NAME_USER_LAST_NAME = "userLastName";
     public static final String PARAM_NAME_ENROLLEE_FACULTY = "enrollee-faculty";
 
     public static final String PARAM_NAME_FULLNAME = "completename";
@@ -49,7 +44,6 @@ public class RequestParam {
     public static final String PARAM_NAME_DISTRICT = "district";
     public static final String PARAM_NAME_LOCALITY = "locality";
 
-    public static final String PARAM_NAME_EMAIL = "email";
     public static final String PARAM_NAME_FILE = "file";
 
 
@@ -82,4 +76,9 @@ public class RequestParam {
     public static final String PARAM_NAME_LANGUAGE_EXAM = "exam1";
     public static final String PARAM_NAME_FIRST_PROFILE_EXAM = "exam2";
     public static final String PARAM_NAME_SECOND_PROFILE_EXAM = "exam3";
+
+    public static final String PARAM_NAME_MESSAGE_SUBJECT = "subject";
+    public static final String PARAM_NAME_MESSAGE = "message";
+
+    public static final String PARAM_NAME_SCHOOL_MARK = "school_mark";
 }

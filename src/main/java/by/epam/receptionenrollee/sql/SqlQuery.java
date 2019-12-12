@@ -131,4 +131,32 @@ public class SqlQuery {
             "INNER JOIN " +
             "faculty AS f ON s.id_faculty_fk = f.id_faculty " +
             "WHERE id_speciality = ?";
+
+    @Language("MySQL")
+    public static final String FIND_USER_FIRST_LAST_NAME_EMAIL_BY_USER_ID =
+            "SELECT first_name, last_name, email " +
+            "FROM user " +
+            "WHERE id_user = ?";
+
+    @Language("MySQL")
+    public static final String FIND_ENROLLEE_SCORE_BY_ID =
+            "SELECT FLOOR(AVG(mark)*10 + (language_mark + first_profile_exam_mark + second_profile_exam_mark)) AS score " +
+            "FROM enrollee AS e " +
+            "INNER JOIN school_mark AS shM ON shM.id_enrollee_fk = e.id_enrollee " +
+            "INNER JOIN entrance_examination AS enExam ON shM.id_enrollee_fk = enExam.id_enrollee_fk " +
+            "WHERE id_enrollee = ?";
+
+    @Language("MySQL")
+    public static final String FIND_FIRST_LAST_NAME_SPECIALITY_FACULTY_BY_EMAIL =
+            "SELECT first_name, last_name, specialty_name, faculty_name " +
+            "FROM user AS u " +
+            "INNER JOIN enrollee AS e ON u.id_user = e.id_user_fk " +
+            "INNER JOIN speciality AS s ON e.id_speciality_fk = s.id_speciality " +
+            "INNER JOIN faculty AS f ON s.id_faculty_fk = f.id_faculty " +
+            "WHERE email = ?";
+
+    @Language("MySQL")
+    public static final String NOTIFICATION_INSERT =
+            "INSERT INTO notification (id_enrollee_fk, notification) " +
+            "VALUES (?, ?)";
 }

@@ -12,7 +12,6 @@ public class RegisterCommand implements ActionCommand {
         Validator validator = new Validator();
         String page;
         page = validator.getCompititionRegisterPage(sessionRequestContent);
-        System.out.println("RegisterCommand--> " + sessionRequestContent.getSessionParameter(PARAM_NAME_LOGIN_FROM_COMPITITION_REGISTER));
         return page;
     }
 }

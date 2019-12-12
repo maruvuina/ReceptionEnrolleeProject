@@ -1,6 +1,6 @@
 package by.epam.receptionenrollee.factory;
 
-import by.epam.receptionenrollee.dao.manager.DatabaseManager;
+import by.epam.receptionenrollee.manager.DatabaseManager;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

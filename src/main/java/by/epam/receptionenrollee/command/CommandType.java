@@ -23,7 +23,7 @@ public enum CommandType {
         }
     },
 
-    GOTOREGISTER {
+    GO_TO_REGISTER {
         {
             this.command = new GoToRegisterCommand();
         }
@@ -47,9 +47,15 @@ public enum CommandType {
         }
     },
 
-    BACK_TO_ADMIN_HOME_COMMAND {
+    BACK_TO_ADMIN_HOME {
         {
             this.command = new BackToAdminHomeCommand();
+        }
+    },
+
+    CONTACT {
+        {
+            this.command = new ContactCommand();
         }
     };
 

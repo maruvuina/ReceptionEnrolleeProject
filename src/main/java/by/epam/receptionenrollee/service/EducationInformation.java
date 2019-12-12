@@ -8,6 +8,9 @@ public class EducationInformation {
     private int enrolleePosition;
     private int enrolleesCount;
     private int facultyPlan;
+    private String enrolleeFirstName;
+    private String enrolleeLastName;
+    private String enrolleeEmail;
 
     public EducationInformation() {};
 
@@ -75,6 +78,30 @@ public class EducationInformation {
 
     public void setFacultyPlan(int facultyPlan) {
         this.facultyPlan = facultyPlan;
+    }
+
+    public void setEnrolleeFirstName(String enrolleeFirstName) {
+        this.enrolleeFirstName = enrolleeFirstName;
+    }
+
+    public void setEnrolleeLastName(String enrolleeLastName) {
+        this.enrolleeLastName = enrolleeLastName;
+    }
+
+    public String getEnrolleeFirstName() {
+        return enrolleeFirstName;
+    }
+
+    public String getEnrolleeLastName() {
+        return enrolleeLastName;
+    }
+
+    public String getEnrolleeEmail() {
+        return enrolleeEmail;
+    }
+
+    public void setEnrolleeEmail(String enrolleeEmail) {
+        this.enrolleeEmail = enrolleeEmail;
     }
 
     @Override
