@@ -103,19 +103,4 @@ public class Translator {
         Map<String, String> vocabulary = getFormedDictionary(language);
         return vocabulary.get(stringToTranslate);
     }
-
-    public static void main(final String[] args) {
-
-//        Translator translator = new Translator();
-//        String translate =
-//                translator.translate("be_BY",
-//                        "мікрабіялогія");
-//        System.out.println(translate);
-
-
-//        String regex = "^([А-Я][а-яё]{1,23}|[A-Z][a-z]{1,23})$";
-//        String test = "Вершинина";
-//        boolean b = test.matches(regex);
-//        System.out.println(b);
-    }
 }

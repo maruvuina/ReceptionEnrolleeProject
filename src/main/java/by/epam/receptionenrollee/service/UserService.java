@@ -111,8 +111,4 @@ public class UserService {
         }
         return educationInformation;
     }
-
-    public void sendMessageToEnrollee() {
-
-    }
 }

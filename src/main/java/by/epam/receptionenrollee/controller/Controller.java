@@ -60,13 +60,7 @@ public class Controller extends HttpServlet {
                         });
         SessionRequestContent sessionRequestContent = new SessionRequestContent(request);
         page = command.execute(sessionRequestContent);
-        //System.out.println("LOGIN----->" + sessionRequestContent.getParameter("login"));
-        //System.out.println("PAGE------> "+ page);
         sessionRequestContent.updateRequestSession(request);
-        System.out.println("userFirstName " + sessionRequestContent.getParameter("userFirstName"));
-        System.out.println("userLastName " + sessionRequestContent.getParameter("userLastName"));
-        System.out.println("userRole " + sessionRequestContent.getParameter("userRole"));
-
         if (page != null) {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
             dispatcher.forward(request, response);

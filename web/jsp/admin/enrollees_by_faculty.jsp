@@ -43,7 +43,7 @@
                     <input type="hidden" name="userFirstName" value="${requestScope.userFirstName}">
                     <input type="hidden" name="userLastName" value="${requestScope.userLastName}">
                     <input type="hidden" name="userRole" value="${requestScope.userRole}">
-                    <button class="logout-btn">
+                    <button class="logout-btn btn-back-to-faculty">
                         <fmt:message key="enrollees.back_to_faculty"/>
                     </button>
                 </form>

@@ -7,6 +7,11 @@ public class Notification extends Entity {
 
     public Notification() {}
 
+    public Notification(int idEnrollee, boolean enrolment) {
+        this.idEnrollee = idEnrollee;
+        this.enrolment = enrolment;
+    }
+
     public Notification(int idNotification, int idEnrollee, boolean enrolment) {
         super(idNotification);
         this.idEnrollee = idEnrollee;

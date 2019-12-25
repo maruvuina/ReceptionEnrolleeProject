@@ -20,6 +20,7 @@ public class ServiceParam {
     private UserDaoImpl userDaoImpl;
     private SpecialityDaoImpl specialityDaoImpl;
     private FacultyDaoImpl facultyDaoImpl;
+    private NotificationDaoImpl notificationDaoImpl;
     private int idUser;
     private int idUserSpeciality;
     private int idEnrollee;
@@ -30,7 +31,8 @@ public class ServiceParam {
 
     public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
                         EntranceExaminationDaoImpl entranceExaminationDaoImpl, SchoolMarkDaoImpl schoolMarkDaoImpl,
-                        SchoolSubjectDaoImpl schoolSubjectDaoImpl, UserDaoImpl userDaoImpl, SpecialityDaoImpl specialityDaoImpl) {
+                        SchoolSubjectDaoImpl schoolSubjectDaoImpl, UserDaoImpl userDaoImpl,
+                        SpecialityDaoImpl specialityDaoImpl, NotificationDaoImpl notificationDaoImpl) {
         this.sessionRequestContent = sessionRequestContent;
         this.enrolleeDaoImpl = enrolleeDaoImpl;
         this.entranceExaminationDaoImpl = entranceExaminationDaoImpl;
@@ -38,6 +40,7 @@ public class ServiceParam {
         this.schoolSubjectDaoImpl = schoolSubjectDaoImpl;
         this.userDaoImpl = userDaoImpl;
         this.specialityDaoImpl = specialityDaoImpl;
+        this.notificationDaoImpl = notificationDaoImpl;
     }
 
     public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
@@ -157,6 +160,10 @@ public class ServiceParam {
 
     public void setEnrollees(List<Enrollee> enrollees) {
         this.enrollees = enrollees;
+    }
+
+    public NotificationDaoImpl getNotificationDaoImpl() {
+        return notificationDaoImpl;
     }
 
     public String getEnrolleeEducationParameter(String educationParameter, TranslatorDataType translatorDataType) {

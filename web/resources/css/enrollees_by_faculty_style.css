@@ -333,3 +333,7 @@ button:hover {
 .goToFacultiesList a:hover {
     color: black;
 }
+
+.btn-back-to-faculty {
+    width: 30%;
+}

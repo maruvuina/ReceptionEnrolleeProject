@@ -11,8 +11,8 @@
     <script src="<c:url value="/resources/js/jquery-3.4.1.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/resources/select2-4.0.10/css/select2.min.css"/>">
     <script src="<c:url value="/resources/select2-4.0.10/js/select2.min.js"/>"></script>
-    <script src="<c:url value="/resources/js/fileinput.js"/>"></script>
-    <script src="<c:url value="/resources/js/ready.js"/>"></script>
+    <script src="<c:url value="/resources/js/fileinput.js"/>" charset="UTF-8"></script>
+    <script src="<c:url value="/resources/js/ready.js"/>" charset="UTF-8"></script>
     <title></title>
 </head>
 <body>

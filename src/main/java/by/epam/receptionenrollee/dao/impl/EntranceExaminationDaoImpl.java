@@ -21,7 +21,6 @@ public class EntranceExaminationDaoImpl extends AbstractDao<EntranceExamination>
 
     public EntranceExaminationDaoImpl() {
         Mapper<EntranceExamination, PreparedStatement> mapperToDatabase = (EntranceExamination entranceExamination, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, entranceExamination.getId());
             preparedStatement.setInt(1, entranceExamination.getIdEnrollee());
             preparedStatement.setInt(2, entranceExamination.getLanguageMark());
             preparedStatement.setInt(3, entranceExamination.getFirstProfileExamMark());
@@ -50,7 +49,7 @@ public class EntranceExaminationDaoImpl extends AbstractDao<EntranceExamination>
     }
 
     @Override
-    public boolean insertEntranceExamination(EntranceExamination entranceExamination) throws SQLException, DaoException {
+    public boolean insertEntranceExamination(EntranceExamination entranceExamination) throws DaoException {
         return insert(entranceExamination, SqlQuery.ENTRANCE_EXAMINATION_INSERT);
     }
 

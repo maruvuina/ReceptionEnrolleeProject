@@ -21,7 +21,6 @@ public class SchoolMarkDaoImpl extends AbstractDao<SchoolMark> implements School
 
     public SchoolMarkDaoImpl() {
         Mapper<SchoolMark, PreparedStatement> mapperToDatabase = (SchoolMark schoolMark, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, schoolMark.getId());
             preparedStatement.setInt(1, schoolMark.getIdSubject());
             preparedStatement.setInt(2, schoolMark.getIdEmplloee());
             preparedStatement.setInt(3, schoolMark.getMark());
@@ -47,7 +46,7 @@ public class SchoolMarkDaoImpl extends AbstractDao<SchoolMark> implements School
     }
 
     @Override
-    public boolean insertSchoolMark(SchoolMark schoolMark) throws SQLException, DaoException {
+    public boolean insertSchoolMark(SchoolMark schoolMark) throws DaoException {
         return insert(schoolMark, SqlQuery.SCHOOL_MARK_INSERT);
     }
 

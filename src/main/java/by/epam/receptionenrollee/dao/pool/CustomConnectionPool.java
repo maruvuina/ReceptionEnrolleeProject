@@ -20,10 +20,10 @@ public enum CustomConnectionPool {
     INSTANCE;
 
     private BlockingDeque<ProxyConnection> freeConnection;
+
     private Queue<ProxyConnection> givenAwayConnections;
 
     private static int DEFAULT_POOL_SIZE;
-    //private int pollTimeout = Integer.parseInt(DatabaseManager.getProperty(DatabaseManager.MAX_WAIT_MILLIS));
 
     private volatile boolean isPoolReleased = false;
 
@@ -44,7 +44,6 @@ public enum CustomConnectionPool {
     CustomConnectionPool() {
         try {
             Class.forName(DatabaseManager.getProperty(DatabaseManager.DRIVER_NAME));
-            //DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
             DatabaseProperties databasePropertie = new DatabaseProperties();
             Properties properties = databasePropertie.getDatabaseProperties();
             String url = DatabaseManager.getProperty(DatabaseManager.URL);
@@ -78,7 +77,6 @@ public enum CustomConnectionPool {
     public Connection getConnection() throws PoolException {
         if (!isPoolReleased) {
             try {
-                //freeConnection.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 ProxyConnection connection = freeConnection.take();
                 givenAwayConnections.offer(connection);
                 return connection;

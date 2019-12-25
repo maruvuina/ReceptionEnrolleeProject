@@ -1,4 +1,4 @@
-var userLang = document.getElementsByTagName("html")[0].getAttribute("lang");
+﻿var userLang = document.getElementsByTagName("html")[0].getAttribute("lang");
 
 var errorMessagesLanguage =
     [
@@ -27,15 +27,11 @@ function printError(elemId, hintMsg) {
 }
 
 function validateEmail(email, emailErrorId, indexErrorMessage) {
-    if (email === "") {
+    var regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    if (regex.test(email) === false) {
         printError(emailErrorId, getTranslatedErrorMessage(indexErrorMessage));
     } else {
-        var regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-        if (regex.test(email) === false) {
-            printError(emailErrorId, getTranslatedErrorMessage(indexErrorMessage));
-        } else {
-            printError(emailErrorId, "");
-        }
+        printError(emailErrorId, "");
     }
 }
 

@@ -19,7 +19,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,8 +69,7 @@ public class EnrolleeService {
         return sessionRequestContent.getParametersByName(PARAM_NAME_SCHOOL_MARK);
     }
 
-    private boolean registerEnrolleeEntranceExamination(ServiceParam serviceParam)
-            throws DaoException, SQLException {
+    private boolean registerEnrolleeEntranceExamination(ServiceParam serviceParam) throws DaoException {
         SessionRequestContent sessionRequestContent = serviceParam.getSessionRequestContent();
         EntranceExaminationDaoImpl entranceExaminationDaoImpl = serviceParam.getEntranceExaminationDaoImpl();
         EntranceExamination newExamination = new EntranceExamination();
@@ -82,7 +80,7 @@ public class EnrolleeService {
         return entranceExaminationDaoImpl.insertEntranceExamination(newExamination);
     }
 
-    private boolean registerEnrolleeSchoolMark(ServiceParam serviceParam) throws DaoException, SQLException {
+    private boolean registerEnrolleeSchoolMark(ServiceParam serviceParam) throws DaoException {
         boolean isInserted = false;
         List<String> schoolSubjectMarks = getSchoolSubjectMarks(serviceParam.getSessionRequestContent());
         SchoolSubjectDaoImpl schoolSubjectDaoImpl = serviceParam.getSchoolSubjectDaoImpl();
@@ -126,14 +124,15 @@ public class EnrolleeService {
         SchoolSubjectDaoImpl schoolSubjectDaoImpl = DaoFactory.getInstance().getSchoolSubjectDao();
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
+        NotificationDaoImpl notificationDaoImpl = DaoFactory.getInstance().getNotificationDao();
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(enrolleeDaoImpl, entranceExaminationDaoImpl, schoolMarkDaoImpl,
-                schoolSubjectDaoImpl, userDaoImpl, specialityDaoImpl);
+                schoolSubjectDaoImpl, userDaoImpl, specialityDaoImpl, notificationDaoImpl);
         try {
             ServiceParam serviceParam =
                     new ServiceParam(sessionRequestContent, enrolleeDaoImpl,
                             entranceExaminationDaoImpl, schoolMarkDaoImpl, schoolSubjectDaoImpl,
-                            userDaoImpl, specialityDaoImpl);
+                            userDaoImpl, specialityDaoImpl, notificationDaoImpl);
             String email = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
             User user = userDaoImpl.findUserByEmail(email);
             String userSpeciality = serviceParam
@@ -144,15 +143,12 @@ public class EnrolleeService {
             serviceParam.setIdUserSpeciality(idUserSpeciality);
             newEnrollee = registerEnrolleeValues(serviceParam);
             serviceParam.setIdEnrollee(newEnrollee.getId());
+            setNotificationForRegisteredEnrollee(serviceParam);
             registerEnrolleeEntranceExamination(serviceParam);
             registerEnrolleeSchoolMark(serviceParam);
         } catch (DaoException e) {
             transaction.rollback();
             logger.log(Level.ERROR, "Error while trying register enrollee: ", e);
-            throw new ServiceException(e);
-        } catch (SQLException e) {
-            transaction.rollback();
-            logger.log(Level.ERROR, "Error in sql when register enrollee: ", e);
             throw new ServiceException(e);
         } finally {
             transaction.end();
@@ -219,7 +215,6 @@ public class EnrolleeService {
     public EducationInformation getEnrolleeEducationInformation(SessionRequestContent sessionRequestContent, int idEnrolleeSpeciality) throws ServiceException {
         SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
-
         FacultyDaoImpl facultyDaoImpl = DaoFactory.getInstance().getFacultyDao();
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(specialityDaoImpl, enrolleeDaoImpl, facultyDaoImpl);
@@ -343,5 +338,12 @@ public class EnrolleeService {
         for (Enrollee enrollee: enrollees) {
             enrollee.setAvatar(getEnrolleeAvatar(enrollee.getAvatar()));
         }
+    }
+
+    private void setNotificationForRegisteredEnrollee(ServiceParam serviceParam) throws DaoException {
+        Notification notification = new Notification();
+        notification.setIdEnrollee(serviceParam.getIdEnrollee());
+        notification.setEnrolment(false);
+        serviceParam.getNotificationDaoImpl().insertNotification(notification);
     }
 }

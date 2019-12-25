@@ -6,7 +6,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-
+@Deprecated
 public class MySqlDataSourceFactory {
     private static final Logger logger = Logger.getLogger(MySqlDataSourceFactory.class);
 

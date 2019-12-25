@@ -7,8 +7,8 @@
 <html lang="${language}">
 <head>
     <link rel="icon" type="image/png" href="<c:url value="/resources/img/icons/favicon.ico"/>">
-    <script src="<c:url value="/resources/js/selectOnlyThisCheckbox.js"/>"></script>
-    <script src="<c:url value="/resources/js/notificationFormValidation.js"/>"></script>
+    <script src="<c:url value="/resources/js/selectOnlyThisCheckbox.js"/>" charset="UTF-8"></script>
+    <script src="<c:url value="/resources/js/notificationFormValidation.js"/>" charset="UTF-8"></script>
     <script src="<c:url value="/resources/js/jquery-3.4.1.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/resources/css/notification_style.css"/>">
     <title><fmt:message key="enrollees.notificate"/></title>
@@ -60,9 +60,10 @@
                     <input type="hidden" name="userLastName" value="${requestScope.userLastName}">
                     <input type="hidden" name="userRole" value="${requestScope.userRole}">
                     <h3><label for="admin-email" class="label-from"><fmt:message key="notification.page.label.admin_email"/></label></h3>
-                    <input type="email" id="admin-email" name="adminEmail" placeholder="<fmt:message key="notification.page.placeholder.admin_email"/>"/>
+                    <input required type="email" id="admin-email" name="adminEmail" placeholder="<fmt:message key="notification.page.placeholder.admin_email"/>"/>
+                    <div class="error" id="adminEmailError"></div>
                     <h3><label for="enrollee-email" class="label-to"><fmt:message key="notification.page.label.enrollee_email"/></label></h3>
-                    <input type="email" id="enrollee-email" name="enrolleeEmail" value="${requestScope.enrolleeEmail}"/>
+                    <input required type="email" id="enrollee-email" name="enrolleeEmail" value="${requestScope.enrolleeEmail}"/>
                     <div class="error" id="enrolleeEmailError"></div>
                     <div class="enrollee-status">
                         <div class="status">
@@ -71,7 +72,7 @@
                         </div>
                         <div class="status">
                             <h4><label for="check2" class="label-to checkbox"><fmt:message key="notification.page.status.negative"/></label></h4>
-                            <input type="checkbox" id="check2" class="enrolleeNotEntered" name="enrolleeNotEntered" value="0" onclick="selectOnlyThis(this.id)">
+                            <input type="checkbox" id="check2" class="enrolleeNotEntered" name="enrolleeNotEntered" value="0" onclick="selectOnlyThis(this.id)" checked="checked">
                         </div>
                     </div>
                     <h3><label for="subject" class="label-subject"><fmt:message key="notification.page.label.subject"/></label></h3>
