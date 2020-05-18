@@ -57,6 +57,30 @@ public enum CommandType {
         {
             this.command = new ContactCommand();
         }
+    },
+
+    ENROLLED_STUDENTS {
+        {
+            this.command = new EnrolledStudentsCommand();
+        }
+    },
+
+    EDIT {
+        {
+            this.command = new EditCommand();
+        }
+    },
+
+    GO_TO_EDIT_ENROLLEE {
+        {
+            this.command = new GoToEditEnrolleeCommand();
+        }
+    },
+
+    BACK_TO_USER_HOME {
+        {
+            this.command = new BackToUserHomeCommand();
+        }
     };
 
     ActionCommand command;

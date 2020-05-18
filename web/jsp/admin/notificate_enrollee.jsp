@@ -18,7 +18,7 @@
         <div class="wrapper">
             <div class="header-row">
                 <div class="logo">
-                    <a class="site-logo" href="<c:url value="/jsp/admin/notificate-enrollee.jsp"/>">
+                    <a class="site-logo" href="<c:url value="/jsp/admin/notificate_enrollee.jsp"/>">
                         <img src="<c:url value="/resources/img/logo-bsu-enrollee.png"/>" alt="logo"/>
                     </a>
                 </div>
@@ -68,11 +68,11 @@
                     <div class="enrollee-status">
                         <div class="status">
                             <h4><label for="check1" class="label-to checkbox"><fmt:message key="notification.page.status.possitive"/></label></h4>
-                            <input type="checkbox" id="check1" class="enrolleeEntered" name="enrolleeEntered" value="1" onclick="selectOnlyThis(this.id)">
+                            <input type="checkbox" id="check1" class="enrolleeEntered" name="enrolleeEntered" value="true" onclick="selectOnlyThis(this.id)">
                         </div>
                         <div class="status">
                             <h4><label for="check2" class="label-to checkbox"><fmt:message key="notification.page.status.negative"/></label></h4>
-                            <input type="checkbox" id="check2" class="enrolleeNotEntered" name="enrolleeNotEntered" value="0" onclick="selectOnlyThis(this.id)" checked="checked">
+                            <input type="checkbox" id="check2" class="enrolleeNotEntered" name="enrolleeNotEntered" value="false" onclick="selectOnlyThis(this.id)" checked="checked">
                         </div>
                     </div>
                     <h3><label for="subject" class="label-subject"><fmt:message key="notification.page.label.subject"/></label></h3>

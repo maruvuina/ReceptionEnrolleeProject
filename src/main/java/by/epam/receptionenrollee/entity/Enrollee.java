@@ -7,6 +7,7 @@ public class Enrollee extends Entity {
     private String district;
     private String locality;
     private String avatar;
+    private int attempt;
 
     public Enrollee(){}
 
@@ -69,6 +70,14 @@ public class Enrollee extends Entity {
         this.avatar = avatar;
     }
 
+    public int getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(int attempt) {
+        this.attempt = attempt;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Enrollee{");
@@ -77,7 +86,8 @@ public class Enrollee extends Entity {
         sb.append(", birthday='").append(birthday).append('\'');
         sb.append(", district='").append(district).append('\'');
         sb.append(", locality='").append(locality).append('\'');
-        sb.append(", avatar='").append(avatar);
+        sb.append(", avatar='").append(avatar).append('\'');
+        sb.append(", attempt=").append(attempt);
         sb.append('}');
         return sb.toString();
     }
@@ -95,6 +105,9 @@ public class Enrollee extends Entity {
             return false;
         }
         if (getIdSpeciality() != enrollee.getIdSpeciality()) {
+            return false;
+        }
+        if (getAttempt() != enrollee.getAttempt()) {
             return false;
         }
         if (getBirthday() != null ? !getBirthday().equals(enrollee.getBirthday()) : enrollee.getBirthday() != null) {
@@ -118,6 +131,7 @@ public class Enrollee extends Entity {
         result = 17 * result + (getDistrict() != null ? getDistrict().hashCode() : 0);
         result = 31 * result + (getLocality() != null ? getLocality().hashCode() : 0);
         result = 17 * result + (getAvatar() != null ? getAvatar().hashCode() : 0);
+        result = 31 * result + getAttempt();
         return result;
     }
 }

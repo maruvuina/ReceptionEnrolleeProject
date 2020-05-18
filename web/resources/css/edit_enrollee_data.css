@@ -1,0 +1,345 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    width: 100%;
+    background: #00D2AF;
+    padding: 20px 0;
+}
+
+.wrapper {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.header-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+body {
+    background: #f5f5f5;
+}
+
+.container {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    width: 1024px;
+    position: relative;
+    margin: 0 auto;
+    padding: 0;
+}
+
+a .site-logo {
+    display: inline-block;
+}
+
+.site-logo img {
+    max-width: 100%;
+    height: auto;
+    width: 250px;
+    margin-left: 50px;
+}
+
+.logo-user {
+    display: flex;
+    background: #00bd9d;
+    height: 120px;
+}
+
+button {
+    outline: none !important;
+    border: none;
+    background: transparent;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+.logout-btn, .submit {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    height: 62px;
+    border-radius: 3px;
+    background: #0B444D;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    align-items: center;
+    padding: 0 25px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    transition: all 0.4s;
+    margin-left: 40%;
+    margin-bottom: 30px;
+}
+
+.logout-btn:hover, .submit:hover {
+    background: #333333;
+}
+
+.logout {
+    margin-top: 15px;
+    margin-right: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.bottom-footer {
+    text-align: center;
+    padding: 40px 0;
+    background: #00D2AF;
+    color: #fff;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.username {
+    width: 450px;
+    text-align: right;
+}
+
+.role {
+    margin-left: 40px;
+}
+
+.user-description {
+    font-family: 'Roboto', sans-serif;
+    padding: 20px 10px 10px 10px;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: white;
+    margin-top: 15px;
+    margin-left: 10%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.user-avatar {
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 25px;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: auto;
+}
+
+.contact {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    margin: 60px 0 60px 0;
+    padding: 50px 30px 50px 30px;
+    background: #fff;
+    border: 1px solid #dadada;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-style {
+    width: 100%;
+    padding: 16px 55px 16px 16px;
+}
+
+.form-style input[type="text"],
+.form-style input[type="email"] {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 93.2%;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px 30px 15px;
+    margin: 0 30px 0 30px;
+}
+
+.form-style input[type="text"]:focus,
+.form-style input[type="email"]:focus {
+    box-shadow: 0 0 5px #43D1AF;
+    border: 1px solid #43D1AF;
+}
+
+.error {
+    color: red;
+    padding-bottom: 10px;
+}
+
+.accordion {
+    position: relative;
+    margin: 50px auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.accordion .trigger #checkbox-1,
+.accordion .trigger #checkbox-2 {
+    display: none;
+}
+
+.accordion .trigger #checkbox-1:checked + label,
+.accordion .trigger #checkbox-2:checked + label {
+    background-color: #333333;
+}
+
+.accordion .trigger #checkbox-1:checked + label i:before,
+.accordion .trigger #checkbox-2:checked + label i:before {
+    transform: translate(5px, 8px) rotate(45deg);
+}
+
+.accordion .trigger #checkbox-1:checked + label i:after,
+.accordion .trigger #checkbox-2:checked + label i:after {
+    transform: translate(-5px, 8px) rotate(-45deg);
+}
+
+.accordion .trigger .checkbox {
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    color: white;
+    cursor: pointer;
+    background-color: #0B444D;
+}
+
+.accordion .trigger .checkbox i {
+    position: absolute;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    right: 20px;
+}
+
+.accordion .trigger .checkbox i:before, .accordion .trigger .checkbox i:after {
+    position: absolute;
+    content: '';
+    width: 16px;
+    height: 3px;
+    background-color: white;
+    transition: transform 250ms ease;
+}
+
+.accordion .trigger .checkbox i:before {
+    transform: translate(-5px, 8px) rotate(45deg);
+}
+
+.accordion .trigger .checkbox i:after {
+    transform: translate(5px, 8px) rotate(-45deg);
+}
+
+.accordion .trigger .content {
+    position: relative;
+    max-height: 1px;
+    padding: 0;
+    overflow-y: scroll;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: whitesmoke;
+    transition: max-height 500ms ease-in-out;
+}
+
+.accordion .trigger .content h3 {
+    margin: 15px 0 15px 30px;
+}
+
+.accordion .trigger .content p {
+    margin: 0 30px 30px;
+}
+
+#checkbox-1:checked ~ .content,
+#checkbox-2:checked ~ .content {
+    max-height: 350px;
+    transition: max-height 500ms ease-in-out;
+}
+
+.faculties-div,
+.specialities-div {
+    margin: 30px 0 30px 30px;
+}
+
+.birthday {
+    display: flex;
+}
+
+#month,
+#day,
+#year {
+    margin: 0 30px 0 30px;
+}
+
+#first-name,
+#last-name,
+#middle-name {
+    display: flex;
+}
+
+select {
+    background: #e8eeef;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    outline: 0;
+    padding: 10px;
+    width: 96.5%;
+    box-sizing: border-box;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    margin: 0 0 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-appearance: menulist-button;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+}
+
+.attemptNotification {
+    font-size: 16px;
+    display: flex;
+}
+
+.attempt {
+    color: white;
+    background: #0B444D;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    width: 40px;
+    height: 30px;
+    border-radius: 3px;
+}
+
+.back-to-user-home-btn {
+    padding: 30px 30px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 700;
+}

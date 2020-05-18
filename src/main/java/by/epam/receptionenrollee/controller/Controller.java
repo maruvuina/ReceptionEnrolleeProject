@@ -3,7 +3,7 @@ package by.epam.receptionenrollee.controller;
 import by.epam.receptionenrollee.command.ActionCommand;
 import by.epam.receptionenrollee.command.ActionFactory;
 import by.epam.receptionenrollee.dao.pool.CustomConnectionPool;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
+import by.epam.receptionenrollee.service.SessionRequestContent;
 import by.epam.receptionenrollee.resource.ConfigurationManager;
 import by.epam.receptionenrollee.resource.MessageManager;
 
@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 
 import static by.epam.receptionenrollee.command.PagePath.INDEX;

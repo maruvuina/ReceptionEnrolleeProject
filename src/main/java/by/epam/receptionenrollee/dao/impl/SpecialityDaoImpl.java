@@ -5,6 +5,7 @@ import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.dao.SpecialityDao;
 import by.epam.receptionenrollee.entity.Speciality;
+import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.service.EducationInformation;
 import by.epam.receptionenrollee.sql.SqlQuery;
@@ -27,10 +28,8 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
 
     public SpecialityDaoImpl() {
         Mapper<Speciality, PreparedStatement> mapperToDatabase = (Speciality speciality, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, speciality.getId());
-            preparedStatement.setInt(1, speciality.getIdDepartment());
-            preparedStatement.setString(2, speciality.getSpecialityName());
-            preparedStatement.setInt(3, speciality.getPlan());
+            preparedStatement.setString(1, speciality.getSpecialityName());
+            preparedStatement.setInt(2, speciality.getPlan());
         };
         super.setMapperToDatabase(mapperToDatabase);
         Mapper<ResultSet, Speciality> mapperFromDatabase = (ResultSet resultSet, Speciality speciality) -> {
@@ -49,7 +48,7 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
 
     @Override
     public Speciality findSpecialityById(Integer id) throws DaoException {
-        return null;
+        return findByValue(Speciality.class, SqlQuery.FIND_SPECIALITY_BY_ID, id);
     }
 
     @Override
@@ -67,11 +66,11 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
         return false;
     }
 
-    @Override
-    public int getSpecialityIdByName(String specialityName) throws DaoException {
+    public int getSpecialityIdByName(String specialityName, String facultyName) throws DaoException {
         int idSpeciality = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_ID)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_ID_BY_SPECIALITY_NAME_FACULTY_NAME)) {
             preparedStatement.setString (1, specialityName);
+            preparedStatement.setString (2, facultyName);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 idSpeciality = resultSet.getInt(ColumnLabel.COLUMN_LABEL_ID_SPECIALITY);
@@ -87,7 +86,7 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
     @Override
     public EducationInformation getSpecialityNameFacultyNameBySpecialityId(int id) throws DaoException {
         EducationInformation educationInformation = new EducationInformation();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_SPECIALITY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

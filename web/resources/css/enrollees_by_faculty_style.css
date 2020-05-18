@@ -223,7 +223,7 @@ button:hover {
 
 .logout-btn:hover,
 .notificate-enrollee:hover,
-.show-enrolleed-students:hover {
+.show-enrolled-students:hover {
     background: #333333;
 }
 
@@ -280,7 +280,6 @@ button:hover {
     padding: 50px 0 50px 0;
     background: #fff;
     border: 1px solid #dadada;
-
 }
 
 .no-enrollees-description {
@@ -295,7 +294,7 @@ button:hover {
     justify-content: center;
 }
 
-.show-enrolleed-students {
+.show-enrolled-students {
     line-height: 1.5;
     color: #fff;
     text-transform: uppercase;
@@ -318,8 +317,9 @@ button:hover {
 }
 
 .goToFacultiesList {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     text-align: right;
+    width: 100%;
 }
 
 .goToFacultiesList a {
@@ -336,4 +336,18 @@ button:hover {
 
 .btn-back-to-faculty {
     width: 30%;
+}
+
+.faculty-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.facultyName {
+    font-size: 16px;
+    color: #0B444D;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    padding: 25px 0 25px 25px;
 }

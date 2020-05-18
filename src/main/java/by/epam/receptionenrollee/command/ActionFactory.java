@@ -18,22 +18,4 @@ public class ActionFactory {
                 .map(CommandType::getCommand)
                 .findAny();
     }
-
-    //TODO
-//    public ActionCommand defineCommand2(HttpServletRequest request) {
-//        ActionCommand current = new EmptyCommand();
-//        String action = request.getParameter("command");
-//
-//        if (action == null || action.isEmpty()) {
-//            return current;
-//        }
-//        try {
-//            CommandType currentEnum = CommandType.valueOf(action.toUpperCase());
-//            current = currentEnum.getCommand();
-//        } catch (IllegalArgumentException e) {
-//            request.setAttribute("wrongAction", action
-//                    + MessageManager.getProperty("message.wrongaction"));
-//        }
-//        return current;
-//    }
 }

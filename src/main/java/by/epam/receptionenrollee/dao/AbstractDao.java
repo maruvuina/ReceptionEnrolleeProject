@@ -48,6 +48,23 @@ public abstract class AbstractDao<T extends Entity> {
         return items;
     }
 
+    protected <V> List<T> findAllByValue(Class t, String SqlSelectByParameter, V value) throws DaoException {
+        List<T> items = new ArrayList<>();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlSelectByParameter)) {
+            addParameterToPreparedStatement(preparedStatement, 1, value);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                T item = getItemInstance(t);
+                mapperFromDatabase.map(resultSet, item);
+                items.add(item);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying find rows in database: ", e);
+            throw new DaoException(e);
+        }
+        return items;
+    }
+
     protected <V> T findByValue(Class t, String SqlSelectByParameter, V value) throws DaoException {
         T item = getItemInstance(t);
         try(PreparedStatement preparedStatement = connection.prepareStatement(SqlSelectByParameter)) {
@@ -84,8 +101,7 @@ public abstract class AbstractDao<T extends Entity> {
                 ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     entity.setId(generatedKeys.getInt(1));
-                }
-                else {
+                } else {
                     throw new DaoException("Getting user ID failed by getGeneratedKeys() function, no ID obtained.");
                 }
             }
@@ -134,14 +150,8 @@ public abstract class AbstractDao<T extends Entity> {
         if (value instanceof Integer) {
             preparedStatement.setInt(paramNum, (Integer) value);
         }
+        if (value instanceof Boolean) {
+            preparedStatement.setBoolean(paramNum, (Boolean) value);
+        }
     }
-//    public void close(Statement statement) {
-//        try {
-//            if (statement != null) {
-//                statement.close();
-//            }
-//        } catch (SQLException e) {
-//            logger.error("Cannot statement: " + e);
-//        }
-//    }
 }

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class NotificationDaoImpl extends AbstractDao<Notification> implements NotificationDao {
@@ -49,12 +50,30 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
     }
 
     @Override
-    public boolean updateNotification(Notification notification) {
-        return false;
+    public Notification updateNotification(Notification notification) throws DaoException {
+        return null;
     }
 
     @Override
     public boolean deleteNotification(Notification notification) {
         return false;
+    }
+
+    public boolean updateNotificationStatusByUserEmail(Notification notification, String userEmail) throws DaoException {
+        boolean result;
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.UPDATE_ENROLLEE_STATUS)) {
+            preparedStatement.setBoolean(1, notification.isEnrolment());
+            preparedStatement.setString(2, userEmail);
+            int updateCount = preparedStatement.executeUpdate();
+            if (updateCount > 0) {
+                result = true;
+            } else {
+                throw new DaoException("Update notification failed.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to update row in database: ", e);
+            throw new DaoException(e);
+        }
+        return result;
     }
 }

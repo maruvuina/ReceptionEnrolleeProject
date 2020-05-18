@@ -21,11 +21,18 @@ let errorPasswordMessagesLanguage =
         "Калі ласка увядзіце правільны пароль."
     ];
 
-let errorStringMessagesLanguage =
+let errorFullnameMessagesLanguage =
     [
         "Please verify your full name.",
         "Пожалуйста проверьте ваше ФИО.",
         "Калі ласка праверце ваша поўнае імя."
+    ];
+
+let errorBirthdayMessagesLanguage =
+    [
+        "Please verify your birthday date.",
+        "Пожалуйста проверьте введенную дату рождения.",
+        "Калі ласка праверце уведзеную дату нараджэння."
     ];
 
 function getTranslatedErrorMessage(errorMessagesLanguageType, index) {
@@ -49,8 +56,10 @@ function getTranslatedErrorMessageForConcreteField(errorMessageFieldType, indexE
         errorMessageConcreteFieldType = errorEmailMessagesLanguage;
     } else if (errorMessageFieldType === "passwordErrorMessage") {
         errorMessageConcreteFieldType = errorPasswordMessagesLanguage;
-    } else if (errorMessageFieldType === "stringErrorMessage") {
-        errorMessageConcreteFieldType = errorStringMessagesLanguage;
+    } else if (errorMessageFieldType === "fullNameErrorMessage") {
+        errorMessageConcreteFieldType = errorFullnameMessagesLanguage;
+    } else if (errorMessageFieldType === "birthdayErrorMessage") {
+        errorMessageConcreteFieldType = errorBirthdayMessagesLanguage;
     }
     if (errorMessageType === 0) {
         errorMessage = getTranslatedErrorMessage(errorMessagesLanguageForEmptyField, indexErrorMessage);
@@ -60,59 +69,79 @@ function getTranslatedErrorMessageForConcreteField(errorMessageFieldType, indexE
     return errorMessage;
 }
 
+function validateStringField(string) {
+    let regex = /^([А-Я][а-яё]{1,23}|[A-Z][a-z]{1,23})$/;
+    return regex.test(string) !== false;
+}
+
+function validateDay(string) {
+    let regex = /(0[1-9]|[12]\\d|3[01])/;
+    return regex.test(string) !== false;
+}
+
+function validateMonth(string) {
+    let regex = /^(0?[1-9]|1[012])$/;
+    return regex.test(string) !== false;
+}
+
+function validateYear(string) {
+    let regex = /^\\d{4}$/;
+    return regex.test(string) !== false;
+}
+
 function printError(elemId, hintMsg) {
     let errrorDiv = document.getElementById(elemId);
     errrorDiv.innerHTML = hintMsg;
     errrorDiv.style.background = "#ffd2d2";
 }
 
-function validateEmail(email, emailErrorId, indexErrorMessage) {
-    if(email === "") {
-        printError(emailErrorId, getTranslatedErrorMessageForConcreteField("emailErrorMessage", indexErrorMessage, 0));
+function validateBirthday(day, month, year) {
+    let stringErrorName = "errorBirthday";
+    if(!validateDay(day) || !validateMonth(month) || !validateYear(year)) {
+        printError(stringErrorName, getTranslatedErrorMessageForConcreteField("birthdayErrorMessage", 0, 1));
     } else {
-        let regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-        if(regex.test(email) === false) {
-            printError(emailErrorId, getTranslatedErrorMessageForConcreteField("emailErrorMessage", indexErrorMessage, 1));
-        } else {
-            printError(emailErrorId, "");
-        }
+        printError(stringErrorName, "");
     }
-}
-
-function validatePassword(password, passwordErrorId, indexErrorMessage) {
-    if(password === "") {
-        printError(passwordErrorId, getTranslatedErrorMessageForConcreteField("passwordErrorMessage", indexErrorMessage, 0));
-    } else {
-        let regex = /(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S+$).{8,}/;
-        if(regex.test(password) === false) {
-            printError(passwordErrorId, getTranslatedErrorMessageForConcreteField("passwordlErrorMessage", indexErrorMessage, 1));
-        } else {
-            printError(passwordErrorId, "");
-        }
-    }
-}
-
-function validateStringField(string) {
-    let regex = /^([А-Я][а-яё]{1,23}|[A-Z][a-z]{1,23})$/;
-    return regex.test(string) !== false;
 }
 
 function validateFullName(firstName, lastName, middleName) {
     let stringErrorName = "errorFullname";
     if(!validateStringField(firstName) || !validateStringField(lastName) || !validateStringField(middleName)) {
-        printError(stringErrorName, getTranslatedErrorMessageForConcreteField("stringErrorMessage", 0, 1));
+        printError(stringErrorName, getTranslatedErrorMessageForConcreteField("fullNameErrorMessage", 0, 1));
     } else {
         printError(stringErrorName, "");
     }
 }
 
 function validateForm() {
-    let email = document.forms["registerForm"]["login"].value;
-    let password = document.forms["registerForm"]["password"].value;
-    let firstName = document.forms["registerForm"]["completename"].value;
-    let lastName = document.forms["registerForm"]["surname"].value;
-    let middleName = document.forms["registerForm"]["middlename"].value;
-    validateEmail(email, "emailError", 0);
-    validatePassword(password, "passwordError", 0);
+    let firstName = document.forms["editForm"]["firstNameToChange"].value;
+    let lastName = document.forms["editForm"]["lastNameToChange"].value;
+    let middleName = document.forms["editForm"]["middleNameToChange"].value;
+    let day = document.forms["editForm"]["day"].value;
+    let month = document.forms["editForm"]["month"].value;
+    let year = document.forms["editForm"]["year"].value;
     validateFullName(firstName, lastName, middleName);
+    validateBirthday(day, month, year);
+}
+
+function setChoosingInformation() {
+    let checkbox1 = document.getElementById('checkbox-1');
+    let checkbox2 = document.getElementById('checkbox-2');
+    let changeCase = document.getElementById('changeCase');
+    if (checkbox1.checked && checkbox2.checked) {
+        changeCase.value = "2";
+    } else if (checkbox2.checked) {
+        changeCase.value = "1";
+    } else if (checkbox1.checked) {
+        changeCase.value = "0";
+    } else {
+        changeCase.value = "";
+    }
+}
+
+let attempt = document.getElementById('attempt');
+if (attempt.innerHTML === "0") {
+    let checkbox2 = document.getElementById('checkbox-2');
+    checkbox2.disabled = true;
+    document.getElementById('label-checkbox-2').style.background = "grey";
 }

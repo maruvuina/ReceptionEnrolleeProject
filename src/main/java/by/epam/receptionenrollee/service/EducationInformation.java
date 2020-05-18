@@ -11,8 +11,9 @@ public class EducationInformation {
     private String enrolleeFirstName;
     private String enrolleeLastName;
     private String enrolleeEmail;
+    private String avatarEnrollee;
 
-    public EducationInformation() {};
+    public EducationInformation() {}
 
     public EducationInformation(int idEnrollee, String facultyName, String specialityName, int enrolleeScore, int enrolleePosition, int enrolleesCount, int facultyPlan) {
         this.idEnrollee = idEnrollee;
@@ -104,13 +105,18 @@ public class EducationInformation {
         this.enrolleeEmail = enrolleeEmail;
     }
 
+    public String getAvatarEnrollee() {
+        return avatarEnrollee;
+    }
+
+    public void setAvatarEnrollee(String avatarEnrollee) {
+        this.avatarEnrollee = avatarEnrollee;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("EducationInformation{");
-        sb.append("idEnrollee=").append(idEnrollee);
-        sb.append(", facultyName='").append(facultyName).append('\'');
-        sb.append(", specialityName='").append(specialityName).append('\'');
-        sb.append(", enrolleeScore=").append(enrolleeScore);
+        sb.append("enrolleeScore=").append(enrolleeScore);
         sb.append(", enrolleePosition=").append(enrolleePosition);
         sb.append(", enrolleesCount=").append(enrolleesCount);
         sb.append(", facultyPlan=").append(facultyPlan);

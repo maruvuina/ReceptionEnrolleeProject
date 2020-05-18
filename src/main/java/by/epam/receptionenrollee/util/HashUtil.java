@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.validator;
+package by.epam.receptionenrollee.util;
 
 import org.mindrot.jbcrypt.BCrypt;
 

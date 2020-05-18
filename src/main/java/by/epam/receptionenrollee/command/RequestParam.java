@@ -32,6 +32,7 @@ public class RequestParam {
     public static final String PARAM_NAME_USER_FIRST_NAME = "userFirstName";
     public static final String PARAM_NAME_USER_LAST_NAME = "userLastName";
     public static final String PARAM_NAME_ENROLLEE_FACULTY = "enrollee-faculty";
+    public static final String PARAM_NAME_FACULTY_NAME = "facultyName";
 
     public static final String PARAM_NAME_FULLNAME = "completename";
     public static final String PARAM_NAME_SURNAME = "surname";
@@ -47,7 +48,7 @@ public class RequestParam {
     public static final String PARAM_NAME_FILE = "file";
 
 
-    public static final String PARAM_NAME_BELARUSIAN_LANGUAGE = "lang_bel";
+    public static final String PARAM_NAME_DEPARTMENT = "department";
     public static final String PARAM_NAME_BELARUSIAN_LITERATURE = "lang_bel_lit";
 
     public static final String PARAM_NAME_RUSSIAN_LANGUAGE = "lang_rus";
@@ -81,4 +82,11 @@ public class RequestParam {
     public static final String PARAM_NAME_MESSAGE = "message";
 
     public static final String PARAM_NAME_SCHOOL_MARK = "school_mark";
+
+    public static final String ENROLLEE_STATUS = "enrolleeStatus";
+    public static final String FIRST_NAME_TO_CHANGE = "firstNameToChange";
+    public static final String LAST_NAME_TO_CHANGE = "lastNameToChange";
+    public static final String MIDDLE_NAME_TO_CHANGE = "middleNameToChange";
+    public static final String PARAM_NAME_CHANGE_CASE_INFORMATION = "changeCase";
+    public static final String PARAM_NAME_ATTEMPT = "attempt";
 }

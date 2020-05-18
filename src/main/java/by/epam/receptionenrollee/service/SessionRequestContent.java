@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.logic;
+package by.epam.receptionenrollee.service;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -64,15 +64,6 @@ public class SessionRequestContent {
                 parameter = String.join("", entryParameter.getValue());
             }
         }
-//        String []parameterValues =
-//                requestParameters
-//                        .entrySet()
-//                        .stream()
-//                        .filter(e -> e.getKey().equals(parameterName))
-//                        .map(Map.Entry::getValue)
-//                        .findFirst()
-//                        .orElse(null);
-//        return String.join("", parameterValues);
         return parameter;
     }
 

@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.validator;
+package by.epam.receptionenrollee.util;
 
 import java.security.SecureRandom;
 import java.text.DateFormat;

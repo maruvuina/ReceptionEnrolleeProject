@@ -6,7 +6,6 @@ import by.epam.receptionenrollee.entity.*;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.factory.DaoFactory;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
 import by.epam.receptionenrollee.util.TranslatorDataType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -23,8 +22,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static by.epam.receptionenrollee.command.RequestParam.*;
-import static by.epam.receptionenrollee.validator.StringUtil.getCurrentDateTime;
-import static by.epam.receptionenrollee.validator.StringUtil.randomString;
+import static by.epam.receptionenrollee.util.StringUtil.getCurrentDateTime;
+import static by.epam.receptionenrollee.util.StringUtil.randomString;
 import static java.util.stream.Collectors.toMap;
 
 public class EnrolleeService {
@@ -32,6 +31,25 @@ public class EnrolleeService {
     private static final String PATH_TO_UPLOADED_FILES_APP =
             "d:\\uploaded-files\\enrollee-system";
     private static final String USER_UPLOAD_IMAGES_DIR = "user-images";
+
+    private enum ChangeInformation {
+        CHANGE_ONLY_PERSONAL_INFORMATION {
+            {
+                this.changeCase = 0;
+            }
+        },
+        CHANGE_ONLY_EDUCATIONAL_INFORMATION {
+            {
+                this.changeCase = 1;
+            }
+        },
+        CHANGE_PERSONAL_EDUCATIONAL_INFORMATION {
+            {
+                this.changeCase = 2;
+            }
+        };
+        int changeCase;
+    }
 
     private String getEnrolleeBirthday(SessionRequestContent sessionRequestContent) {
         return sessionRequestContent.getParameter(PARAM_NAME_YEAR) + "-" +
@@ -111,7 +129,7 @@ public class EnrolleeService {
         enrolleeDaoImpl.insertEnrollee(newEnrollee);
         newEnrollee
                 .setId(enrolleeDaoImpl
-                        .getEnrolleeIdByUserId(serviceParam
+                        .findEnrolleeIdByUserId(serviceParam
                                 .getIdUser()));
         return newEnrollee;
     }
@@ -138,7 +156,10 @@ public class EnrolleeService {
             String userSpeciality = serviceParam
                     .getEnrolleeEducationParameter(sessionRequestContent
                             .getParameter(PARAM_NAME_SPECIALITY), TranslatorDataType.TRANSLATOR_SPECIALITY);
-            int idUserSpeciality = specialityDaoImpl.getSpecialityIdByName(userSpeciality);
+            String userFaculty = serviceParam
+                    .getEnrolleeEducationParameter(sessionRequestContent
+                            .getParameter(PARAM_NAME_DEPARTMENT), TranslatorDataType.TRANSLATOR_FACULTY);
+            int idUserSpeciality = specialityDaoImpl.getSpecialityIdByName(userSpeciality, userFaculty);
             serviceParam.setIdUser(user.getId());
             serviceParam.setIdUserSpeciality(idUserSpeciality);
             newEnrollee = registerEnrolleeValues(serviceParam);
@@ -163,7 +184,7 @@ public class EnrolleeService {
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(userDaoImpl, enrolleeDaoImpl);
         try {
-            int idEnrollee = enrolleeDaoImpl.getEnrolleeIdByUserId(user.getId());
+            int idEnrollee = enrolleeDaoImpl.findEnrolleeIdByUserId(user.getId());
             enrollee = enrolleeDaoImpl.findEnrolleeById(idEnrollee);
             enrollee.setId(idEnrollee);
             transaction.commit();
@@ -206,20 +227,20 @@ public class EnrolleeService {
         educationInformation =
                 getEnrolleeFacultySpeciality(serviceParam);
         serviceParam.setFacultyName(facultyName);
-        serviceParam.setIdEnrollee(educationInformation.getIdEnrollee());
         educationInformation.setEnrolleeScore(getEnrolleeScore(serviceParam));
         educationEnrolleePosition(educationInformation, serviceParam);
         return educationInformation;
     }
 
-    public EducationInformation getEnrolleeEducationInformation(SessionRequestContent sessionRequestContent, int idEnrolleeSpeciality) throws ServiceException {
+    public EducationInformation getEnrolleeEducationInformation(SessionRequestContent sessionRequestContent, Enrollee enrollee) throws ServiceException {
         SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
         EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
         FacultyDaoImpl facultyDaoImpl = DaoFactory.getInstance().getFacultyDao();
         EntityTransaction transaction = new EntityTransaction();
         transaction.begin(specialityDaoImpl, enrolleeDaoImpl, facultyDaoImpl);
         ServiceParam serviceParam = new ServiceParam(sessionRequestContent, enrolleeDaoImpl, specialityDaoImpl, facultyDaoImpl);
-        serviceParam.setIdUserSpeciality(idEnrolleeSpeciality);
+        serviceParam.setIdUserSpeciality(enrollee.getIdSpeciality());
+        serviceParam.setIdEnrollee(enrollee.getId());
         EducationInformation educationInformation;
         try {
             educationInformation = getEducationInformation(serviceParam);
@@ -266,7 +287,7 @@ public class EnrolleeService {
                     .map(Enrollee::getId)
                     .collect(Collectors.toList());
         } else {
-            enrolleesId = enrolleeDaoImpl.getEnrolleesIdByFacultyName(facultyName);
+            enrolleesId = enrolleeDaoImpl.findEnrolleesIdByFacultyName(facultyName);
         }
         Map<Integer, Integer> enrollees = new HashMap<>();
         for (Integer enrolleeId : enrolleesId) {
@@ -304,11 +325,12 @@ public class EnrolleeService {
         ServiceParam serviceParam =
                 new ServiceParam(sessionRequestContent, enrolleeDaoImpl, specialityDaoImpl);
         try {
-            List<Enrollee> enrollees = getListOfEnrolleesByConcreteFaculty(serviceParam);
+            List<Enrollee> enrollees = getListOfNotEnrolleesByConcreteFaculty(serviceParam);
             serviceParam.setEnrollees(enrollees);
             for (Enrollee enrollee : enrollees) {
                 User user = userDaoImpl.findUserFirstLastNameEmailByUserId(enrollee.getIdUser());
                 serviceParam.setIdUserSpeciality(enrollee.getIdSpeciality());
+                serviceParam.setIdEnrollee(enrollee.getId());
                 EducationInformation information = getEducationInformation(serviceParam);
                 information.setEnrolleeFirstName(user.getFirstName());
                 information.setEnrolleeLastName(user.getLastName());
@@ -326,10 +348,10 @@ public class EnrolleeService {
         return informationMap;
     }
 
-    private List<Enrollee> getListOfEnrolleesByConcreteFaculty(ServiceParam serviceParam) throws DaoException {
+    private List<Enrollee> getListOfNotEnrolleesByConcreteFaculty(ServiceParam serviceParam) throws DaoException {
         EnrolleeDaoImpl enrolleeDaoImpl = serviceParam.getEnrolleeDaoImpl();
         String facultyName = getTranslatedFacultyName(serviceParam);
-        List<Enrollee> enrolleeList = enrolleeDaoImpl.getEnrolleesByFacultyName(facultyName);
+        List<Enrollee> enrolleeList = enrolleeDaoImpl.getNotEnrolledStudentsByFacultyName(facultyName);
         getAvatarsForAllEnrollees(enrolleeList);
         return enrolleeList;
     }
@@ -345,5 +367,210 @@ public class EnrolleeService {
         notification.setIdEnrollee(serviceParam.getIdEnrollee());
         notification.setEnrolment(false);
         serviceParam.getNotificationDaoImpl().insertNotification(notification);
+    }
+
+    public List<EducationInformation> getEnrolledStudentsListByFaculty(SessionRequestContent sessionRequestContent) throws ServiceException {
+        List<EducationInformation> educationInformationList;
+        EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
+        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
+        SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(enrolleeDaoImpl, userDaoImpl, specialityDaoImpl);
+        try {
+            ServiceParam serviceParam = new ServiceParam(sessionRequestContent, enrolleeDaoImpl, userDaoImpl, specialityDaoImpl);
+            educationInformationList = getEnrolledStudents(serviceParam);
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while trying get information about enrolled students: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+        return educationInformationList;
+    }
+
+    private List<EducationInformation> getEnrolledStudents(ServiceParam serviceParam) throws DaoException {
+        List<EducationInformation> educationInformationList = new ArrayList<>();
+        String facultyName = getTranslatedFacultyName(serviceParam);
+        List<Enrollee> enrollees = serviceParam.getEnrolleeDaoImpl()
+                .getEnrolledStudentsByFacultyName(facultyName);
+        for (Enrollee enrollee : enrollees) {
+            enrollee.setAvatar(getEnrolleeAvatar(enrollee.getAvatar()));
+            User user = serviceParam.getUserDaoImpl()
+                    .findUserFirstLastNameEmailByUserId(enrollee.getIdUser());
+            Speciality speciality = serviceParam.getSpecialityDaoImpl()
+                    .findSpecialityById(enrollee.getIdSpeciality());
+            EducationInformation educationInformation = new EducationInformation();
+            educationInformation.setEnrolleeFirstName(user.getFirstName());
+            educationInformation.setEnrolleeLastName(user.getLastName());
+            educationInformation.setAvatarEnrollee(enrollee.getAvatar());
+            educationInformation.setFacultyName(facultyName);
+            educationInformation.setSpecialityName(speciality.getSpecialityName());
+            educationInformationList.add(educationInformation);
+        }
+        return educationInformationList;
+    }
+
+    public void changeEnrolleeStatus(String enrolleeStatus, String enrolleeEmail) throws ServiceException {
+        NotificationDaoImpl notificationDaoImpl = DaoFactory.getInstance().getNotificationDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(notificationDaoImpl);
+        try {
+            Notification notification = new Notification();
+            notification.setEnrolment(Boolean.parseBoolean(enrolleeStatus));
+            notificationDaoImpl.updateNotificationStatusByUserEmail(notification, enrolleeEmail);
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while trying get information about enrolled students: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+    }
+
+    private EditInformation changeEnrolleePersonalInformation(ServiceParam serviceParam) throws DaoException {
+        EditInformation editInformation = new EditInformation();
+        Enrollee updatedEnrollee = new Enrollee();
+        User updatedUser = new User();
+        updatedUser.setFirstName(serviceParam.getSessionRequestContent()
+                .getParameter(FIRST_NAME_TO_CHANGE));
+        updatedUser.setLastName(serviceParam.getSessionRequestContent()
+                .getParameter(LAST_NAME_TO_CHANGE));
+        updatedUser.setMiddleName(serviceParam.getSessionRequestContent()
+                .getParameter(MIDDLE_NAME_TO_CHANGE));
+        updatedUser.setEmail(serviceParam.getSessionRequestContent()
+                .getParameter(PARAM_NAME_LOGIN));
+        updatedUser = serviceParam.getUserDaoImpl().updateUserFullName(updatedUser);
+        updatedEnrollee.setIdUser(updatedUser.getId());
+        updatedEnrollee.setBirthday(getEnrolleeBirthday(serviceParam.getSessionRequestContent()));
+
+        Enrollee enrollee = serviceParam.getEnrolleeDaoImpl().updateEnrolleeDate(updatedEnrollee);
+        editInformation.setUser(updatedUser);
+
+        List<Enrollee> enrollees = new ArrayList<>();
+        enrollees.add(enrollee);
+        serviceParam.setEnrollees(enrollees);
+        serviceParam.setIdEnrollee(enrollee.getId());
+
+        return editInformation;
+    }
+
+    private User getUpdatedUserAfterChangeInformation(ServiceParam serviceParam) throws DaoException {
+        return serviceParam
+                .getUserDaoImpl()
+                .findUserByEmail(serviceParam.getSessionRequestContent()
+                .getParameter(PARAM_NAME_LOGIN));
+    }
+
+    private ServiceParam changeEnrolleeEducationInformation(ServiceParam serviceParam) throws DaoException {
+        String userSpeciality = serviceParam
+                .getEnrolleeEducationParameter(serviceParam.getSessionRequestContent()
+                        .getParameter(PARAM_NAME_SPECIALITY), TranslatorDataType.TRANSLATOR_SPECIALITY);
+        String userFaculty = serviceParam
+                .getEnrolleeEducationParameter(serviceParam.getSessionRequestContent()
+                        .getParameter(PARAM_NAME_DEPARTMENT), TranslatorDataType.TRANSLATOR_FACULTY);
+        int idUserSpeciality = serviceParam.getSpecialityDaoImpl().getSpecialityIdByName(userSpeciality, userFaculty);
+        User updatedUser = getUpdatedUserAfterChangeInformation(serviceParam);
+        Enrollee updatedEnrollee = new Enrollee();
+        updatedEnrollee.setIdUser(updatedUser.getId());
+        updatedEnrollee.setIdSpeciality(idUserSpeciality);
+        updatedEnrollee = serviceParam.getEnrolleeDaoImpl().updateEnrolleeSpeciality(updatedEnrollee);
+        serviceParam.setIdEnrollee(updatedEnrollee.getId());
+        serviceParam.setFacultyName(userFaculty);
+        serviceParam.setSpecialityName(userSpeciality);
+        List<Enrollee> enrollee = new ArrayList<>();
+        enrollee.add(updatedEnrollee);
+        serviceParam.setEnrollees(enrollee);
+        return serviceParam;
+    }
+
+    private Enrollee getUpdatedEnrolleeAfterChangeInforamtion(ServiceParam updatedServiceParam) {
+        return updatedServiceParam
+                .getEnrollees()
+                .stream()
+                .filter(o -> o.getClass().equals(Enrollee.class))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private EducationInformation getUpdatedEducationInformationAfterChangeInforamtion(ServiceParam updatedServiceParam) throws DaoException {
+        EducationInformation educationInformation = new EducationInformation();
+        educationInformation.setFacultyName(updatedServiceParam.getFacultyName());
+        educationInformation.setSpecialityName(updatedServiceParam.getSpecialityName());
+        educationInformation.setEnrolleeScore(getEnrolleeScore(updatedServiceParam));
+        educationEnrolleePosition(educationInformation, updatedServiceParam);
+        return educationInformation;
+    }
+
+    public EditInformation changeEnrolleeInformation(SessionRequestContent sessionRequestContent) throws ServiceException {
+        EditInformation editInformation = new EditInformation();
+        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
+        SpecialityDaoImpl specialityDaoImpl = DaoFactory.getInstance().getSpecialityDao();
+        EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
+        FacultyDaoImpl facultyDaoImpl = DaoFactory.getInstance().getFacultyDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(userDaoImpl, specialityDaoImpl, enrolleeDaoImpl, facultyDaoImpl);
+        try {
+            ServiceParam serviceParam =
+                    new ServiceParam(sessionRequestContent, enrolleeDaoImpl,
+                            userDaoImpl, specialityDaoImpl, facultyDaoImpl);
+            ServiceParam updatedServiceParam;
+            EducationInformation updatedEducationInformation;
+            int changeCaseInformation = Integer.parseInt(sessionRequestContent.getParameter(PARAM_NAME_CHANGE_CASE_INFORMATION));
+            if (changeCaseInformation == ChangeInformation.CHANGE_ONLY_PERSONAL_INFORMATION.changeCase) {
+                editInformation = changeEnrolleePersonalInformation(serviceParam);
+                updatedEducationInformation = facultyDaoImpl.getSpecialityNameFacultyNameBySpecialityId(editInformation.getUser().getId());
+                updatedEducationInformation.setEnrolleeScore(getEnrolleeScore(serviceParam));
+                serviceParam.setFacultyName(updatedEducationInformation.getFacultyName());
+                educationEnrolleePosition(updatedEducationInformation, serviceParam);
+                editInformation.setEnrollee(getUpdatedEnrolleeAfterChangeInforamtion(serviceParam));
+                editInformation.setEducationInformation(updatedEducationInformation);
+            } else if (changeCaseInformation == ChangeInformation.CHANGE_ONLY_EDUCATIONAL_INFORMATION.changeCase) {
+                updatedServiceParam = changeEnrolleeEducationInformation(serviceParam);
+                updateEnrolleeAttempt(updatedServiceParam);
+                editInformation.setEnrollee(getUpdatedEnrolleeAfterChangeInforamtion(updatedServiceParam));
+                editInformation.setUser(getUpdatedUserAfterChangeInformation(updatedServiceParam));
+                updatedEducationInformation = getUpdatedEducationInformationAfterChangeInforamtion(updatedServiceParam);
+                editInformation.setEducationInformation(updatedEducationInformation);
+            } else if (changeCaseInformation == ChangeInformation.CHANGE_PERSONAL_EDUCATIONAL_INFORMATION.changeCase) {
+                editInformation = changeEnrolleePersonalInformation(serviceParam);
+                updatedServiceParam = changeEnrolleeEducationInformation(serviceParam);
+                updateEnrolleeAttempt(updatedServiceParam);
+                editInformation.setEnrollee(getUpdatedEnrolleeAfterChangeInforamtion(updatedServiceParam));
+                updatedEducationInformation = getUpdatedEducationInformationAfterChangeInforamtion(updatedServiceParam);
+                editInformation.setEducationInformation(updatedEducationInformation);
+            }
+            transaction.commit();
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while change user full name: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+        return editInformation;
+    }
+
+    private void updateEnrolleeAttempt(ServiceParam serviceParam) throws DaoException {
+        Enrollee enrollee = serviceParam.getEnrollees().get(0);
+        serviceParam.getEnrolleeDaoImpl().updateEnrolleeAttempt(enrollee);
+    }
+
+    public int getEnrolleeAttempt(String email) throws ServiceException {
+        int attempt;
+        EnrolleeDaoImpl enrolleeDaoImpl = DaoFactory.getInstance().getEnrolleeDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(enrolleeDaoImpl);
+        try {
+            attempt = enrolleeDaoImpl.findEnrolleeAttemptByEmail(email);
+            transaction.commit();
+        } catch (DaoException e) {
+            transaction.rollback();
+            logger.log(Level.ERROR, "Error while change user full name: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+        return attempt;
     }
 }

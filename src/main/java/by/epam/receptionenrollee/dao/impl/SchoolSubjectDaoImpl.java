@@ -20,7 +20,6 @@ public class SchoolSubjectDaoImpl extends AbstractDao<SchoolSubject> implements 
 
     public SchoolSubjectDaoImpl() {
         Mapper<SchoolSubject, PreparedStatement> mapperToDatabase = (SchoolSubject schoolSubject, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, schoolSubject.getId());
             preparedStatement.setString(1, schoolSubject.getSubjectName());
         };
         super.setMapperToDatabase(mapperToDatabase);

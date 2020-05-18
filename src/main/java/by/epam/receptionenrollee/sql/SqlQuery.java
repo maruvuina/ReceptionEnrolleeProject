@@ -16,7 +16,7 @@ public class SqlQuery {
 
     @Language("MySQL")
     public static final String FIND_ENROLLEE_BY_ID =
-            "SELECT id_enrollee, id_user_fk, id_speciality_fk, birthday, district, locality, avatar " +
+            "SELECT id_enrollee, id_user_fk, id_speciality_fk, birthday, district, locality, avatar, attempt " +
             "FROM enrollee " +
             "WHERE id_enrollee = ?";
 
@@ -62,11 +62,14 @@ public class SqlQuery {
             "SELECT id_school_subject, subject_name FROM school_subject";
 
     @Language("MySQL")
-    public static final String FIND_SPECIALITY_ID =
-            "SELECT id_speciality FROM speciality WHERE specialty_name = ?";
+    public static final String FIND_SPECIALITY_ID_BY_SPECIALITY_NAME_FACULTY_NAME =
+            "SELECT id_speciality " +
+            "FROM speciality AS s " +
+            "INNER JOIN faculty AS f ON s.id_faculty_fk = f.id_faculty " +
+            "WHERE specialty_name = ? AND faculty_name = ?";
 
     @Language("MySQL")
-    public static final String FIND_SPECIALITY_FACULTY =
+    public static final String FIND_SPECIALITY_FACULTY_BY_SPECIALITY_ID =
             "SELECT id_enrollee, specialty_name, faculty_name " +
             "FROM enrollee AS e " +
             "INNER JOIN " +
@@ -98,7 +101,7 @@ public class SqlQuery {
 
     @Language("MySQL")
     public static final String USER_UPDATE =
-            "UPDATE user SET first_name = ?, last_name = ?, middle_name = ?, email = ?, password = ?, role = ? WHERE id_user = ?";
+            "UPDATE user SET `first_name` = ?, `last_name` = ?, `middle_name` = ?, `email` = ?, `password` = ?, `role` = ? WHERE `id_user` = ?";
 
     @Language("MySQL")
     public static final String USER_DELETE =
@@ -120,7 +123,7 @@ public class SqlQuery {
             "speciality AS s ON e.id_speciality_fk = s.id_speciality " +
             "INNER JOIN " +
             "faculty AS f ON s.id_faculty_fk = f.id_faculty " +
-            "WHERE faculty_name = ?";
+            "WHERE `faculty_name` = ?";
 
     @Language("MySQL")
     public static final String FIND_FACULTY_NAME_BY_ENROLLEE_ID_SPECIALITY =
@@ -159,4 +162,85 @@ public class SqlQuery {
     public static final String NOTIFICATION_INSERT =
             "INSERT INTO notification (id_enrollee_fk, notification) " +
             "VALUES (?, ?)";
+
+    @Language("MySQL")
+    public static final String FIND_ENROLLED_STUDENTS_BY_FACULTY_NAME =
+            "SELECT id_enrollee, id_user_fk, id_speciality_fk, birthday, district, locality, avatar " +
+            "FROM enrollee AS e " +
+            "INNER JOIN " +
+            "speciality AS s ON e.id_speciality_fk = s.id_speciality " +
+            "INNER JOIN " +
+            "faculty AS f ON s.id_faculty_fk = f.id_faculty " +
+            "INNER JOIN " +
+            "notification AS n ON n.id_enrollee_fk = e.id_enrollee " +
+            "WHERE faculty_name = ? AND notification = 1";
+
+    @Language("MySQL")
+    public static final String FIND_SPECIALITY_BY_ID =
+            "SELECT id_speciality, id_faculty_fk, specialty_name, plan " +
+            "FROM speciality " +
+            "WHERE id_speciality = ?";
+
+    @Language("MySQL")
+    public static final String UPDATE_ENROLLEE_STATUS =
+    "UPDATE notification " +
+    "SET `notification` = ? " +
+    "WHERE id_enrollee_fk = " +
+            "(SELECT id_enrollee " +
+            "FROM enrollee AS e " +
+            "INNER JOIN user AS u ON e.id_user_fk = u.id_user " +
+            "WHERE `email` = ?)";
+
+    @Language("MySQL")
+    public static final String FIND_NOT_ENROLLED_STUDENTS_BY_FACULTY_NAME =
+            "SELECT id_enrollee, id_user_fk, id_speciality_fk, birthday, district, locality, avatar, attempt " +
+            "FROM enrollee AS e " +
+            "INNER JOIN " +
+            "speciality AS s ON e.id_speciality_fk = s.id_speciality " +
+            "INNER JOIN " +
+            "faculty AS f ON s.id_faculty_fk = f.id_faculty " +
+            "INNER JOIN " +
+            "notification AS n ON n.id_enrollee_fk = e.id_enrollee " +
+            "WHERE faculty_name = ? AND notification = 0";
+
+    @Language("MySQL")
+    public static final String USER_UPDATE_FULL_NAME =
+            "UPDATE user SET `first_name` = ?, `last_name` = ?, `middle_name` = ? WHERE `email` = ?";
+
+    @Language("MySQL")
+    public static final String ENROLLEE_UPDATE_SPECIALITY =
+            "UPDATE enrollee SET `id_speciality_fk` = ? WHERE `id_user_fk` = ?";
+
+    @Language("MySQL")
+    public static final String FIND_ENROLLEE_BY_USER_ID =
+            "SELECT id_enrollee, id_user_fk, id_speciality_fk, birthday, district, locality, avatar, attempt " +
+            "FROM enrollee " +
+            "WHERE id_user_fk = ?";
+
+    @Language("MySQL")
+    public static final String ENROLLEE_UPDATE_DATE =
+            "UPDATE enrollee SET `birthday` = ? WHERE `id_user_fk` = ?";
+
+    @Language("MySQL")
+    public static final String FIND_ENROLLEE_ATTEMPT_BY_EMAIL =
+            "SELECT attempt " +
+            "FROM enrollee AS e " +
+            "INNER JOIN user AS u ON e.id_user_fk = u.id_user " +
+            "WHERE email = ?";
+
+    @Language("MySQL")
+    public static final String FIND_SPECIALITY_FACULTY_BY_USER_ID =
+            "SELECT specialty_name, faculty_name " +
+            "FROM enrollee AS e " +
+            "INNER JOIN " +
+            "speciality AS s ON e.id_speciality_fk = s.id_speciality " +
+            "INNER JOIN " +
+            "faculty AS f ON s.id_faculty_fk = f.id_faculty " +
+            "INNER JOIN " +
+            "user AS u ON e.id_user_fk = u.id_user " +
+            "WHERE u.id_user = ?";
+
+    @Language("MySQL")
+    public static final String ENROLLEE_UPDATE_ATTEMPT =
+            "UPDATE enrollee SET `attempt` = `attempt` - 1 WHERE `id_user_fk` = ?";
 }

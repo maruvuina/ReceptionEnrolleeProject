@@ -48,14 +48,6 @@ public interface SpecialityDao {
     boolean deleteSpeciality(Speciality speciality);
 
     /**
-     * Finds speciality id by its name
-     * @param specialityName - Required speciality name
-     * @return int
-     * @throws DaoException if connection is down, broken or unable to retrieve information for certain reasons
-     */
-    int getSpecialityIdByName(String specialityName) throws DaoException;
-
-    /**
      * Finds faculty and speciality name by concrete speciality id
      * @param id - Speciality id
      * @return EducationInformation of concrete enrollee faculty and speciality names

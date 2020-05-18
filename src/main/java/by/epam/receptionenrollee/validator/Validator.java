@@ -5,23 +5,21 @@ import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.mail.GoogleMail;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
+import by.epam.receptionenrollee.service.*;
 import by.epam.receptionenrollee.manager.DatabaseManager;
 import by.epam.receptionenrollee.resource.ConfigurationManager;
 import by.epam.receptionenrollee.resource.MessageManager;
-import by.epam.receptionenrollee.service.EducationInformation;
-import by.epam.receptionenrollee.service.EnrolleeService;
-import by.epam.receptionenrollee.service.UserService;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 
 import static by.epam.receptionenrollee.command.PagePath.*;
 import static by.epam.receptionenrollee.command.RequestParam.*;
 import static by.epam.receptionenrollee.validator.ParamRegex.*;
-import static by.epam.receptionenrollee.validator.StringUtil.isParamsNotEmpty;
-import static by.epam.receptionenrollee.validator.StringUtil.isParamsNotNull;
+import static by.epam.receptionenrollee.util.StringUtil.isParamsNotEmpty;
+import static by.epam.receptionenrollee.util.StringUtil.isParamsNotNull;
 
 public class Validator {
     private static final Logger logger = Logger.getLogger(Validator.class);
@@ -220,12 +218,13 @@ public class Validator {
     private void enrolleeInformation(SessionRequestContent sessionRequestContent, Enrollee enrollee) throws ServiceException {
         String avatar = enrolleeService.getEnrolleeAvatar(enrollee.getAvatar());
         sessionRequestContent.setRequestAttribute(PARAM_NAME_AVATAR, avatar);
-        EducationInformation educationInformation = enrolleeService.getEnrolleeEducationInformation(sessionRequestContent, enrollee.getIdSpeciality());
+        EducationInformation educationInformation = enrolleeService.getEnrolleeEducationInformation(sessionRequestContent, enrollee);
         sessionRequestContent.setRequestAttribute(PARAM_NAME_EDUCATION_INFORMATION, educationInformation);
     }
 
     private void enrolleeInformationAfterLogin(SessionRequestContent sessionRequestContent, User user) throws ServiceException {
         Enrollee enrollee = enrolleeService.getEnrollee(user);
+        sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, user);
         sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEE, enrollee);
         enrolleeInformation(sessionRequestContent, enrollee);
     }
@@ -247,6 +246,7 @@ public class Validator {
                 sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
                 sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
                 sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEES_INFORMATION_MAP, informationMap);
+                sessionRequestContent.setRequestAttribute(PARAM_NAME_FACULTY_NAME, sessionRequestContent.getParameter(PARAM_NAME_ENROLLEE_FACULTY));
                 page = ConfigurationManager.getProperty(ENROLLEES_BY_FACULTY);
             } catch (ServiceException e) {
                 logger.log(Level.ERROR, "Error while get enrollees by faculty page: ", e);
@@ -287,13 +287,91 @@ public class Validator {
             String message = sessionRequestContent.getParameter(PARAM_NAME_MESSAGE);
             GoogleMail googleMail = new GoogleMail(adminEmail, DatabaseManager.getProperty(DatabaseManager.PASSWORD), title, enrolleeEmail, message);
             googleMail.sendNotificationToEnrollee();
+            try {
+                String enrolleeStatus = sessionRequestContent.getParameter(ENROLLEE_STATUS);
+                enrolleeService.changeEnrolleeStatus(enrolleeStatus, enrolleeEmail);
+            } catch (ServiceException e) {
+                logger.log(Level.ERROR, "Error while trying change enrollee status: ", e);
+            }
             sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
             sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
             sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
-            page = ConfigurationManager.getProperty(ADMIN);
+            page = ConfigurationManager.getProperty(CONFIRMATION);
         } else {
             setErrorRegisterMessage(sessionRequestContent, userLocale);
             page = ConfigurationManager.getProperty(NOTIFICATION_ENROLLEE);
+        }
+        return page;
+    }
+
+    public String getPageEnrolledStudents(SessionRequestContent sessionRequestContent) {
+        String page = null;
+        try {
+            List<EducationInformation> educationInformationList =
+                    enrolleeService.getEnrolledStudentsListByFaculty(sessionRequestContent);
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_EDUCATION_INFORMATION, educationInformationList);
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+            page = ConfigurationManager.getProperty(ENROLLED_STUDENTS_BY_FACULTY);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while trying get enrolled students page: ", e);
+        }
+        return page;
+    }
+
+    public String editEnrolleeData(SessionRequestContent sessionRequestContent) {
+        String page = null;
+        try {
+            EditInformation editInformation = enrolleeService.changeEnrolleeInformation(sessionRequestContent);
+            User updatedUser = editInformation.getUser();
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_USER, updatedUser);
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+            Enrollee updatedEnrollee = editInformation.getEnrollee();
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_ENROLLEE, updatedEnrollee);
+            String avatar = enrolleeService.getEnrolleeAvatar(updatedEnrollee.getAvatar());
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_AVATAR, avatar);
+            EducationInformation educationInformation = editInformation.getEducationInformation();
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_EDUCATION_INFORMATION, educationInformation);
+            page = ConfigurationManager.getProperty(USER);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while trying update student data: ", e);
+        }
+        return page;
+    }
+
+    public String setDataBeforeGoToEdit(SessionRequestContent sessionRequestContent) {
+        String page = null;
+        try {
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_AVATAR, sessionRequestContent.getParameter(PARAM_NAME_AVATAR));
+            String email = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_LOGIN, email);
+            int attempt = enrolleeService.getEnrolleeAttempt(email);
+            sessionRequestContent.setRequestAttribute(PARAM_NAME_ATTEMPT, attempt);
+            page = ConfigurationManager.getProperty(GO_TO_EDIT_ENROLLEE);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while trying set data before go to edit page: ", e);
+        }
+        return page;
+    }
+
+    public String setDataForBackToHomePageEnrollee(SessionRequestContent sessionRequestContent) {
+        String page = null;
+        try {
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_FIRST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_FIRST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_USER_LAST_NAME, sessionRequestContent.getParameter(PARAM_NAME_USER_LAST_NAME));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_ROLE, sessionRequestContent.getParameter(PARAM_NAME_ROLE));
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_AVATAR, sessionRequestContent.getParameter(PARAM_NAME_AVATAR));
+            String email = sessionRequestContent.getParameter(PARAM_NAME_LOGIN);
+            sessionRequestContent.setSessionAttribute(PARAM_NAME_LOGIN, email);
+            User user = userService.getUserByEmail(email);
+            enrolleeInformationAfterLogin(sessionRequestContent, user);
+            page = ConfigurationManager.getProperty(USER);
+        } catch (ServiceException e) {
+            logger.log(Level.ERROR, "Error while trying set data for back to home page enrollee: ", e);
         }
         return page;
     }

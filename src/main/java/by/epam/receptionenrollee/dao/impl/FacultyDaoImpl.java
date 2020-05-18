@@ -6,6 +6,7 @@ import by.epam.receptionenrollee.dao.FacultyDao;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.entity.Faculty;
 import by.epam.receptionenrollee.exception.DaoException;
+import by.epam.receptionenrollee.service.EducationInformation;
 import by.epam.receptionenrollee.sql.SqlQuery;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -21,7 +22,6 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
 
     public FacultyDaoImpl() {
         Mapper<Faculty, PreparedStatement> mapperToDatabase = (Faculty faculty, PreparedStatement preparedStatement) -> {
-            //preparedStatement.setInt(1, faculty.getId());
             preparedStatement.setString(1, faculty.getFacultyName());
             preparedStatement.setString(2, faculty.getFirstExam());
             preparedStatement.setString(3, faculty.getSecondExam());
@@ -77,5 +77,22 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
             logger.log(Level.ERROR,"Error while trying to get faculty and speciality names: ", e);
         }
         return facultyName;
+    }
+
+    public EducationInformation getSpecialityNameFacultyNameBySpecialityId(int id) throws DaoException {
+        EducationInformation educationInformation = new EducationInformation();
+        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_USER_ID)) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                educationInformation.setFacultyName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FACULTY_NAME));
+                educationInformation.setSpecialityName(resultSet.getString(ColumnLabel.COLUMN_LABEL_SPECIALITY_NAME));
+            } else {
+                throw new DaoException("Getting specialty_name, faculty_name failed, no id_user obtained.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to get faculty and speciality names: ", e);
+        }
+        return educationInformation;
     }
 }

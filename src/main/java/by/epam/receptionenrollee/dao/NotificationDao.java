@@ -36,7 +36,7 @@ public interface NotificationDao {
      * @param notification - Notification to update in Database
      * @return true if operation success and false if fails
      */
-    boolean updateNotification(Notification notification);
+    Notification updateNotification(Notification notification) throws DaoException;
 
     /**
      * Deletes notification from Database

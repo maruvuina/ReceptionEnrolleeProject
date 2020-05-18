@@ -2,14 +2,11 @@ package by.epam.receptionenrollee.service;
 
 import by.epam.receptionenrollee.dao.impl.*;
 import by.epam.receptionenrollee.entity.Enrollee;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
 import by.epam.receptionenrollee.util.LanguageParam;
 import by.epam.receptionenrollee.util.Translator;
 import by.epam.receptionenrollee.util.TranslatorDataType;
 
 import java.util.List;
-
-import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_ENROLLEE_FACULTY;
 
 public class ServiceParam {
     private SessionRequestContent sessionRequestContent;
@@ -25,6 +22,7 @@ public class ServiceParam {
     private int idUserSpeciality;
     private int idEnrollee;
     private String facultyName;
+    private String specialityName;
     private List<Enrollee> enrollees;
 
     public ServiceParam(){}
@@ -54,6 +52,23 @@ public class ServiceParam {
                         SpecialityDaoImpl specialityDaoImpl, FacultyDaoImpl facultyDaoImpl) {
         this.sessionRequestContent = sessionRequestContent;
         this.enrolleeDaoImpl = enrolleeDaoImpl;
+        this.specialityDaoImpl = specialityDaoImpl;
+        this.facultyDaoImpl = facultyDaoImpl;
+    }
+
+    public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
+                        UserDaoImpl userDaoImpl, SpecialityDaoImpl specialityDaoImpl) {
+        this.sessionRequestContent = sessionRequestContent;
+        this.enrolleeDaoImpl = enrolleeDaoImpl;
+        this.userDaoImpl = userDaoImpl;
+        this.specialityDaoImpl = specialityDaoImpl;
+    }
+
+    public ServiceParam(SessionRequestContent sessionRequestContent, EnrolleeDaoImpl enrolleeDaoImpl,
+    UserDaoImpl userDaoImpl, SpecialityDaoImpl specialityDaoImpl, FacultyDaoImpl facultyDaoImpl) {
+        this.sessionRequestContent = sessionRequestContent;
+        this.enrolleeDaoImpl = enrolleeDaoImpl;
+        this.userDaoImpl = userDaoImpl;
         this.specialityDaoImpl = specialityDaoImpl;
         this.facultyDaoImpl = facultyDaoImpl;
     }
@@ -140,6 +155,14 @@ public class ServiceParam {
 
     public void setFacultyName(String facultyName) {
         this.facultyName = facultyName;
+    }
+
+    public String getSpecialityName() {
+        return specialityName;
+    }
+
+    public void setSpecialityName(String specialityName) {
+        this.specialityName = specialityName;
     }
 
     public void setSessionRequestContent(SessionRequestContent sessionRequestContent) {

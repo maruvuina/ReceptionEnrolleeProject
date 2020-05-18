@@ -1,10 +1,7 @@
 package by.epam.receptionenrollee.command;
 
-import by.epam.receptionenrollee.logic.SessionRequestContent;
-
-import javax.servlet.http.HttpServletRequest;
+import by.epam.receptionenrollee.service.SessionRequestContent;
 
 public interface ActionCommand {
-    //TODO возращает Router и принимает SessionRequestContent
     String execute(SessionRequestContent sessionRequestContent);
 }

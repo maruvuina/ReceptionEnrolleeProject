@@ -51,7 +51,7 @@ public interface EnrolleeDao {
      * @return int
      * @throws DaoException if connection is down, broken or unable to retrieve information for certain reasons
      */
-    int getEnrolleeIdByUserId(int userId) throws DaoException;
+    int findEnrolleeIdByUserId(int userId) throws DaoException;
 
     /**
      * Finds enrollees id by faculty name
@@ -59,5 +59,5 @@ public interface EnrolleeDao {
      * @return List of required enrollee ids
      * @throws DaoException if connection is down, broken or unable to retrieve information for certain reasons
      */
-    List<Integer> getEnrolleesIdByFacultyName(String facultyName) throws DaoException;
+    List<Integer> findEnrolleesIdByFacultyName(String facultyName) throws DaoException;
 }

@@ -5,21 +5,28 @@ import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.EnrolleeDao;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.entity.Enrollee;
+import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.sql.SqlQuery;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDao {
     private static final Logger logger = LogManager.getLogger(EnrolleeDaoImpl.class);
+
+    private Mapper<Enrollee, PreparedStatement> mapperToDatabase = (Enrollee enrollee, PreparedStatement preparedStatement) -> {
+        preparedStatement.setInt(1, enrollee.getIdUser());
+        preparedStatement.setInt(2, enrollee.getIdSpeciality());
+        preparedStatement.setDate(3, Date.valueOf(enrollee.getBirthday()));
+        preparedStatement.setString(4, enrollee.getDistrict());
+        preparedStatement.setString(5, enrollee.getLocality());
+        preparedStatement.setString(6, enrollee.getAvatar());
+    };
 
     private Mapper<ResultSet, Enrollee> mapperFromDatabase = (ResultSet resultSet, Enrollee enrollee) -> {
         enrollee.setId(resultSet.getInt(ColumnLabel.COLUMN_LABEL_ID_ENROLLEE));
@@ -29,15 +36,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
         enrollee.setDistrict(resultSet.getString(ColumnLabel.COLUMN_LABEL_DISTRICT));
         enrollee.setLocality(resultSet.getString(ColumnLabel.COLUMN_LABEL_LOCALITY));
         enrollee.setAvatar(resultSet.getString(ColumnLabel.COLUMN_LABEL_AVATAR));
-    };
-
-    private Mapper<Enrollee, PreparedStatement> mapperToDatabase = (Enrollee enrollee, PreparedStatement preparedStatement) -> {
-        preparedStatement.setInt(1, enrollee.getIdUser());
-        preparedStatement.setInt(2, enrollee.getIdSpeciality());
-        preparedStatement.setDate(3, Date.valueOf(enrollee.getBirthday()));
-        preparedStatement.setString(4, enrollee.getDistrict());
-        preparedStatement.setString(5, enrollee.getLocality());
-        preparedStatement.setString(6, enrollee.getAvatar());
+        enrollee.setAttempt(resultSet.getInt(ColumnLabel.COLUMN_LABEL_ATTEMPT));
     };
 
     public EnrolleeDaoImpl() {
@@ -71,7 +70,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     @Override
-    public int getEnrolleeIdByUserId(int userId) throws DaoException {
+    public int findEnrolleeIdByUserId(int userId) throws DaoException {
         int idEnrollee = 0;
         try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_ID_BY_USER_ID)) {
             preparedStatement.setInt(1, userId);
@@ -88,7 +87,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     @Override
-    public List<Integer> getEnrolleesIdByFacultyName(String facultyName) throws DaoException {
+    public List<Integer> findEnrolleesIdByFacultyName(String facultyName) throws DaoException {
         List<Integer> enrolleesId = new ArrayList<>();
         try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEES_ID_BY_FACULTY_NAME)) {
             preparedStatement.setString(1, facultyName);
@@ -104,20 +103,15 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     public List<Enrollee> getEnrolleesByFacultyName(String facultyName) throws DaoException {
-        List<Enrollee> enrollees = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEES_BY_FACULTY_NAME)) {
-            preparedStatement.setString(1, facultyName);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Enrollee enrollee = new Enrollee();
-                mapperFromDatabase.map(resultSet, enrollee);
-                enrollees.add(enrollee);
-            }
-        } catch (SQLException e) {
-            logger.log(Level.ERROR,"Error while trying to get enrollee by faculty name: ", e);
-            throw new DaoException(e);
-        }
-        return enrollees;
+        return findAllByValue(Enrollee.class, SqlQuery.FIND_ENROLLEES_BY_FACULTY_NAME, facultyName);
+    }
+
+    public List<Enrollee> getNotEnrolledStudentsByFacultyName(String facultyName) throws DaoException {
+        return findAllByValue(Enrollee.class, SqlQuery.FIND_NOT_ENROLLED_STUDENTS_BY_FACULTY_NAME, facultyName);
+    }
+
+    public List<Enrollee> getEnrolledStudentsByFacultyName(String facultyName) throws DaoException {
+        return findAllByValue(Enrollee.class, SqlQuery.FIND_ENROLLED_STUDENTS_BY_FACULTY_NAME, facultyName);
     }
 
     public int getEnrolleeScoreByEnrolleeId(int idEnrollee) throws DaoException {
@@ -133,5 +127,64 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
             throw new DaoException(e);
         }
         return score;
+    }
+
+    public Enrollee findEnrolleeByUserId(Integer idUser) throws DaoException {
+        return findByValue(Enrollee.class, SqlQuery.FIND_ENROLLEE_BY_USER_ID, idUser);
+    }
+
+    public Enrollee updateEnrolleeSpeciality(Enrollee enrollee) throws DaoException {
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_SPECIALITY)) {
+            preparedStatement.setInt(1, enrollee.getIdSpeciality());
+            preparedStatement.setInt(2, enrollee.getIdUser());
+            preparedStatement.executeUpdate();
+            enrollee = findEnrolleeByUserId(enrollee.getIdUser());
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to update row in database: ", e);
+            throw new DaoException(e);
+        }
+        return enrollee;
+    }
+
+    public Enrollee updateEnrolleeDate(Enrollee enrollee) throws DaoException {
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_DATE)) {
+            preparedStatement.setString(1, enrollee.getBirthday());
+            preparedStatement.setInt(2, enrollee.getIdUser());
+            preparedStatement.executeUpdate();
+            enrollee = findEnrolleeByUserId(enrollee.getIdUser());
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to update row in database: ", e);
+            throw new DaoException(e);
+        }
+        return enrollee;
+    }
+
+    public int findEnrolleeAttemptByEmail(String email) throws DaoException {
+        int attempt = 0;
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(SqlQuery.FIND_ENROLLEE_ATTEMPT_BY_EMAIL)) {
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                attempt = resultSet.getInt(ColumnLabel.COLUMN_LABEL_ATTEMPT);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to find enrolle attempt: ", e);
+            throw new DaoException(e);
+        }
+        return attempt;
+    }
+
+    public void updateEnrolleeAttempt(Enrollee enrollee) throws DaoException {
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_ATTEMPT)) {
+            preparedStatement.setInt(1, enrollee.getIdUser());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to update column attempt in enrollee table in database: ", e);
+            throw new DaoException(e);
+        }
     }
 }

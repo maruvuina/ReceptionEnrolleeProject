@@ -4,13 +4,12 @@ import by.epam.receptionenrollee.dao.AbstractDao;
 import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.dao.UserDao;
-import by.epam.receptionenrollee.entity.Enrollee;
 import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.service.EducationInformation;
 import by.epam.receptionenrollee.sql.SqlQuery;
-import by.epam.receptionenrollee.validator.HashUtil;
+import by.epam.receptionenrollee.util.HashUtil;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -18,30 +17,33 @@ import org.apache.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
 
+    Mapper<User, PreparedStatement> mapperToDatabase = (User user, PreparedStatement preparedStatement) -> {
+        preparedStatement.setString(1, user.getFirstName());
+        preparedStatement.setString(2, user.getLastName());
+        preparedStatement.setString(3, user.getMiddleName());
+        preparedStatement.setString(4, user.getEmail());
+        preparedStatement.setString(5, user.getPassword());
+        preparedStatement.setString(6, String.valueOf(user.getRoleEnum()));
+    };
+
+    Mapper<ResultSet, User> mapperFromDatabase = (ResultSet resultSet, User user) -> {
+        user.setId(resultSet.getInt(ColumnLabel.COLUMN_LABEL_ID_USER));
+        user.setFirstName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FIRST_NAME));
+        user.setLastName(resultSet.getString(ColumnLabel.COLUMN_LABEL_LAST_NAME));
+        user.setMiddleName(resultSet.getString(ColumnLabel.COLUMN_LABEL_MIDDLE_NAME));
+        user.setEmail(resultSet.getString(ColumnLabel.COLUMN_LABEL_EMAIL));
+        user.setPassword(resultSet.getString(ColumnLabel.COLUMN_LABEL_PASSWORD));
+        user.setRoleEnum(RoleEnum.valueOf(resultSet.getString(ColumnLabel.COLUMN_LABEL_ROLE).toUpperCase()));
+    };
+
     public UserDaoImpl() {
-        Mapper<User, PreparedStatement> mapperToDatabase = (User user, PreparedStatement preparedStatement) -> {
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getMiddleName());
-            preparedStatement.setString(4, user.getEmail());
-            preparedStatement.setString(5, user.getPassword());
-            preparedStatement.setString(6, String.valueOf(user.getRoleEnum()));
-        };
         super.setMapperToDatabase(mapperToDatabase);
-        Mapper<ResultSet, User> mapperFromDatabase = (ResultSet resultSet, User user) -> {
-            user.setId(resultSet.getInt(ColumnLabel.COLUMN_LABEL_ID_USER));
-            user.setFirstName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FIRST_NAME));
-            user.setLastName(resultSet.getString(ColumnLabel.COLUMN_LABEL_LAST_NAME));
-            user.setMiddleName(resultSet.getString(ColumnLabel.COLUMN_LABEL_MIDDLE_NAME));
-            user.setEmail(resultSet.getString(ColumnLabel.COLUMN_LABEL_EMAIL));
-            user.setPassword(resultSet.getString(ColumnLabel.COLUMN_LABEL_PASSWORD));
-            user.setRoleEnum(RoleEnum.valueOf(resultSet.getString(ColumnLabel.COLUMN_LABEL_ROLE).toUpperCase()));
-        };
         super.setMapperFromDatabase(mapperFromDatabase);
     }
 
@@ -62,7 +64,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
     @Override
     public User updateUser(User user) throws DaoException {
-        return update(user, SqlQuery.USER_UPDATE, 4, user.getId());
+        return update(user, SqlQuery.USER_UPDATE, 7, user.getId());
     }
 
     @Override
@@ -133,5 +135,21 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
             throw new DaoException(e);
         }
         return educationInformation;
+    }
+
+    public User updateUserFullName(User user) throws DaoException {
+        try(PreparedStatement preparedStatement =
+                    connection.prepareStatement(SqlQuery.USER_UPDATE_FULL_NAME)) {
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3, user.getMiddleName());
+            preparedStatement.setString(4, user.getEmail());
+            preparedStatement.executeUpdate();
+            user = findUserByEmail(user.getEmail());
+        } catch (SQLException e) {
+            logger.log(Level.ERROR,"Error while trying to update row in database: ", e);
+            throw new DaoException(e);
+        }
+        return user;
     }
 }

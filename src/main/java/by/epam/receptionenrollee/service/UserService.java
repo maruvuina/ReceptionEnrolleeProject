@@ -7,8 +7,7 @@ import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.factory.DaoFactory;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
-import by.epam.receptionenrollee.validator.HashUtil;
+import by.epam.receptionenrollee.util.HashUtil;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -110,5 +109,22 @@ public class UserService {
             transaction.end();
         }
         return educationInformation;
+    }
+
+    public User getUserByEmail(String email) throws ServiceException {
+        User user;
+        UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
+        EntityTransaction transaction = new EntityTransaction();
+        transaction.begin(userDaoImpl);
+        try {
+            user = userDaoImpl.findUserByEmail(email);
+            transaction.commit();
+        } catch (DaoException e) {
+            logger.log(Level.ERROR, "Error while trying to get user by email: ", e);
+            throw new ServiceException(e);
+        } finally {
+            transaction.end();
+        }
+        return user;
     }
 }

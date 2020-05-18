@@ -43,9 +43,14 @@
                     <input type="hidden" name="userFirstName" value="${requestScope.userFirstName}">
                     <input type="hidden" name="userLastName" value="${requestScope.userLastName}">
                     <input type="hidden" name="userRole" value="${requestScope.userRole}">
-                    <button class="logout-btn btn-back-to-faculty">
-                        <fmt:message key="enrollees.back_to_faculty"/>
-                    </button>
+                    <div class="faculty-info">
+                        <button class="logout-btn btn-back-to-faculty">
+                            <fmt:message key="enrollees.back_to_faculty"/>
+                        </button>
+                        <div class="facultyName">
+                            <div>${requestScope.facultyName}</div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <c:choose>
@@ -56,8 +61,11 @@
                         </div>
                         <div class="form-show-enrolled">
                             <form name="enrolleedStudentsForm" enctype="multipart/form-data" method="POST" action="controller">
-                                <input type="hidden" name="command" value="enrolledStudents"/>
-                                <button class="show-enrolleed-students"><fmt:message key="enrollees.view_list_enrollees"/></button>
+                                <input type="hidden" name="command" value="enrolled_Students"/>
+                                <input type="hidden" name="userFirstName" value="${requestScope.userFirstName}">
+                                <input type="hidden" name="userLastName" value="${requestScope.userLastName}">
+                                <input type="hidden" name="userRole" value="${requestScope.userRole}">
+                                <button type="submit" class="show-enrolled-students" name="enrollee-faculty" value="${requestScope.facultyName}"><fmt:message key="enrollees.view_list_enrollees"/></button>
                             </form>
                         </div>
                     </div>
@@ -102,7 +110,7 @@
                                             </div>
                                             <div class="user-info-row">
                                                 <div class="user-info-row-title">
-                                                    <button class="notificate-enrollee" name="enrolleeEmail" value="<c:out value="${enrollees.value.enrolleeEmail}"/>"><fmt:message key="enrollees.notificate"/></button>
+                                                    <button type="submit" class="notificate-enrollee" name="enrolleeEmail" value="<c:out value="${enrollees.value.enrolleeEmail}"/>"><fmt:message key="enrollees.notificate"/></button>
                                                 </div>
                                             </div>
                                         </div>

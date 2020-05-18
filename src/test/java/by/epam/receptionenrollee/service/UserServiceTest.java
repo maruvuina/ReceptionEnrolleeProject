@@ -4,7 +4,6 @@ import by.epam.receptionenrollee.dao.impl.UserDaoImpl;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
-import by.epam.receptionenrollee.logic.SessionRequestContent;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -15,7 +14,6 @@ import org.testng.annotations.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mockito.Mockito.times;
 import static org.testng.Assert.assertTrue;
 
 public class UserServiceTest {
@@ -45,8 +43,6 @@ public class UserServiceTest {
     public void getUserByIdIsSuccessful() throws DaoException, ServiceException {
         Mockito.when(userDaoImplMock
                 .findUserById(userId)).thenReturn(new User());
-//        Mockito.verify(userDaoImplMock, times(1))
-//                .findUserById(userId);
         assertThat(userServiceMock.getUserById(userId), is(notNullValue()));
     }
 

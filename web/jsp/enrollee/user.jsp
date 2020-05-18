@@ -16,7 +16,7 @@
         <div class="wrapper">
             <div class="header-row">
                 <div class="logo">
-                    <a class="site-logo" href="<c:url value="/jsp/user.jsp"/>">
+                    <a class="site-logo" href="<c:url value="/jsp/enrollee/user.jsp"/>">
                         <img src="<c:url value="/resources/img/logo-bsu-enrollee.png"/>" alt="logo"/>
                     </a>
                 </div>
@@ -37,6 +37,18 @@
         </div>
     </header>
     <div class="container">
+        <div class="help-edit">
+            <form name="editForm" method="POST" action="controller">
+                <input type="hidden" name="command" value="go_to_edit_enrollee">
+                <input type="hidden" name="userFirstName" value="${requestScope.user.firstName}">
+                <input type="hidden" name="userLastName" value="${requestScope.user.lastName}">
+                <input type="hidden" name="userRole" value="${requestScope.userRole}">
+                <input type="hidden" name="avatar" value="${requestScope.avatar}">
+                <button class="edit-profile-btn" name="login" value="<c:out value="${requestScope.user.email}"/>">
+                    <fmt:message key="user.page.edit"/>
+                </button>
+            </form>
+        </div>
         <div class="enrollees-info">
             <ul class="enrollees">
                 <li>

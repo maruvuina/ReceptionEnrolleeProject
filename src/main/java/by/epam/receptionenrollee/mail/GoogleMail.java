@@ -29,15 +29,7 @@ public class GoogleMail {
     }
 
     public void sendNotificationToEnrollee() {
-        Properties sesiionConfig = new Properties();
-        sesiionConfig.setProperty("mail.smtps.host", "smtp.gmail.com");
-        sesiionConfig.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        sesiionConfig.setProperty("mail.smtp.socketFactory.fallback", "false");
-        sesiionConfig.setProperty("mail.smtp.socketFactory.port", "465");
-        sesiionConfig.setProperty("mail.smtp.port", "465");
-        sesiionConfig.setProperty("mail.smtps.auth", "true");
-        sesiionConfig.setProperty("mail.transport.protocol", "smtp");
-        sesiionConfig.setProperty("mail.smtp.quitwait", "false");
+        Properties sesiionConfig = GoogleMailProperties.getGoogleMailProperties();
         Session session = Session.getInstance(sesiionConfig);
         MimeMessage mimeMessage = new MimeMessage(session);
         try {
