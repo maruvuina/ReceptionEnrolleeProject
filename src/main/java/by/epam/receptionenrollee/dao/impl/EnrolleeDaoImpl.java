@@ -8,9 +8,9 @@ import by.epam.receptionenrollee.entity.Enrollee;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.sql.SqlQuery;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -171,7 +171,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
                 attempt = resultSet.getInt(ColumnLabel.COLUMN_LABEL_ATTEMPT);
             }
         } catch (SQLException e) {
-            logger.log(Level.ERROR,"Error while trying to find enrolle attempt: ", e);
+            logger.log(Level.ERROR,"Error while trying to find enrollee attempt: ", e);
             throw new DaoException(e);
         }
         return attempt;

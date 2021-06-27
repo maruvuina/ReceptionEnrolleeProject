@@ -2,9 +2,9 @@ package by.epam.receptionenrollee.dao;
 
 import by.epam.receptionenrollee.entity.Entity;
 import by.epam.receptionenrollee.exception.DaoException;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -32,9 +32,9 @@ public abstract class AbstractDao<T extends Entity> {
         this.mapperFromDatabase = mapperFromDatabase;
     }
 
-    protected List<T> findAll(Class t, String SqlGetAllQuery) throws DaoException {
+    protected List<T> findAll(Class t, String sqlGetAllQuery) throws DaoException {
         List<T> items = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlGetAllQuery);
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlGetAllQuery);
             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 T item = getItemInstance(t);
@@ -48,9 +48,9 @@ public abstract class AbstractDao<T extends Entity> {
         return items;
     }
 
-    protected <V> List<T> findAllByValue(Class t, String SqlSelectByParameter, V value) throws DaoException {
+    protected <V> List<T> findAllByValue(Class t, String sqlSelectByParameter, V value) throws DaoException {
         List<T> items = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlSelectByParameter)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -65,9 +65,9 @@ public abstract class AbstractDao<T extends Entity> {
         return items;
     }
 
-    protected <V> T findByValue(Class t, String SqlSelectByParameter, V value) throws DaoException {
+    protected <V> T findByValue(Class t, String sqlSelectByParameter, V value) throws DaoException {
         T item = getItemInstance(t);
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlSelectByParameter)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -80,9 +80,9 @@ public abstract class AbstractDao<T extends Entity> {
         return item;
     }
 
-    protected <V> boolean deleteByValue(String SqlDeleteQuery, V value) throws DaoException {
+    protected <V> boolean deleteByValue(String sqlDeleteQuery, V value) throws DaoException {
         boolean result;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlDeleteQuery)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteQuery)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             result = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -92,9 +92,9 @@ public abstract class AbstractDao<T extends Entity> {
         return result;
     }
 
-    protected boolean insert(T entity, String SqlInsertQuery) throws DaoException {
+    protected boolean insert(T entity, String sqlInsertQuery) throws DaoException {
         boolean result;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlInsertQuery, Statement.RETURN_GENERATED_KEYS)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertQuery, Statement.RETURN_GENERATED_KEYS)) {
             mapperToDatabase.map(entity, preparedStatement);
             int affectedRows = preparedStatement.executeUpdate();
             if(result = affectedRows > 0) {
@@ -112,9 +112,9 @@ public abstract class AbstractDao<T extends Entity> {
         return result;
     }
 
-    protected <V> T update(T entity, String SqlUpdateQuery, Integer paramNum, V value) throws DaoException {
+    protected <V> T update(T entity, String sqlUpdateQuery, Integer paramNum, V value) throws DaoException {
         T result = null;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlUpdateQuery)) {
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdateQuery)) {
             mapperToDatabase.map(entity, preparedStatement);
             addParameterToPreparedStatement(preparedStatement, paramNum, value);
             ResultSet resultSet = preparedStatement.executeQuery();

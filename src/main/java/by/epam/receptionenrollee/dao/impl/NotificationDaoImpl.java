@@ -7,9 +7,9 @@ import by.epam.receptionenrollee.dao.NotificationDao;
 import by.epam.receptionenrollee.entity.Notification;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.sql.SqlQuery;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 import java.sql.PreparedStatement;

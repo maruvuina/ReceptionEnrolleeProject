@@ -8,13 +8,14 @@ import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.factory.DaoFactory;
 import by.epam.receptionenrollee.util.HashUtil;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static by.epam.receptionenrollee.command.RequestParam.*;
 
 public class UserService {
-    private static final Logger logger = Logger.getLogger(UserService.class);
+    private static final Logger logger = LogManager.getLogger(UserService.class);
 
     public boolean verifyUserEmail(String email) throws ServiceException {
         boolean isVerified;
@@ -26,7 +27,7 @@ public class UserService {
             transaction.commit();
         } catch (DaoException e) {
             transaction.rollback();
-            logger.log(Level.ERROR, "Error while verifing user email: ", e);
+            logger.log(Level.ERROR, "Error while verifying user email: ", e);
             throw new ServiceException(e);
         } finally {
             transaction.end();
@@ -35,6 +36,7 @@ public class UserService {
     }
 
     public User getUserByEmailPassword(String email, String password) throws ServiceException {
+        System.out.println(email + " ----------------------------- " + password);
         User user;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();

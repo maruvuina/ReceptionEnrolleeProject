@@ -66,11 +66,11 @@ public class SqlQuery {
             "SELECT id_speciality " +
             "FROM speciality AS s " +
             "INNER JOIN faculty AS f ON s.id_faculty_fk = f.id_faculty " +
-            "WHERE specialty_name = ? AND faculty_name = ?";
+            "WHERE speciality_name = ? AND faculty_name = ?";
 
     @Language("MySQL")
     public static final String FIND_SPECIALITY_FACULTY_BY_SPECIALITY_ID =
-            "SELECT id_enrollee, specialty_name, faculty_name " +
+            "SELECT id_enrollee, speciality_name, faculty_name " +
             "FROM enrollee AS e " +
             "INNER JOIN " +
             "speciality AS s ON e.id_speciality_fk = s.id_speciality " +
@@ -151,7 +151,7 @@ public class SqlQuery {
 
     @Language("MySQL")
     public static final String FIND_FIRST_LAST_NAME_SPECIALITY_FACULTY_BY_EMAIL =
-            "SELECT first_name, last_name, specialty_name, faculty_name " +
+            "SELECT first_name, last_name, speciality_name, faculty_name " +
             "FROM user AS u " +
             "INNER JOIN enrollee AS e ON u.id_user = e.id_user_fk " +
             "INNER JOIN speciality AS s ON e.id_speciality_fk = s.id_speciality " +
@@ -177,7 +177,7 @@ public class SqlQuery {
 
     @Language("MySQL")
     public static final String FIND_SPECIALITY_BY_ID =
-            "SELECT id_speciality, id_faculty_fk, specialty_name, plan " +
+            "SELECT id_speciality, id_faculty_fk, speciality_name, plan " +
             "FROM speciality " +
             "WHERE id_speciality = ?";
 
@@ -230,7 +230,7 @@ public class SqlQuery {
 
     @Language("MySQL")
     public static final String FIND_SPECIALITY_FACULTY_BY_USER_ID =
-            "SELECT specialty_name, faculty_name " +
+            "SELECT speciality_name, faculty_name " +
             "FROM enrollee AS e " +
             "INNER JOIN " +
             "speciality AS s ON e.id_speciality_fk = s.id_speciality " +

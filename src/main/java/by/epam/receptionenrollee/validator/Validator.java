@@ -9,8 +9,9 @@ import by.epam.receptionenrollee.service.*;
 import by.epam.receptionenrollee.manager.DatabaseManager;
 import by.epam.receptionenrollee.resource.ConfigurationManager;
 import by.epam.receptionenrollee.resource.MessageManager;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,9 @@ import static by.epam.receptionenrollee.validator.ParamRegex.*;
 import static by.epam.receptionenrollee.util.StringUtil.isParamsNotEmpty;
 import static by.epam.receptionenrollee.util.StringUtil.isParamsNotNull;
 
+
 public class Validator {
-    private static final Logger logger = Logger.getLogger(Validator.class);
+    private static final Logger logger = LogManager.getLogger(Validator.class);
     private EnrolleeService enrolleeService;
     private UserService userService;
 

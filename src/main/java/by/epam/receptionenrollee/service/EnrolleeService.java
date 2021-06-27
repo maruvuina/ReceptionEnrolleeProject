@@ -9,8 +9,9 @@ import by.epam.receptionenrollee.factory.DaoFactory;
 import by.epam.receptionenrollee.util.TranslatorDataType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.Part;
@@ -27,7 +28,7 @@ import static by.epam.receptionenrollee.util.StringUtil.randomString;
 import static java.util.stream.Collectors.toMap;
 
 public class EnrolleeService {
-    private static final Logger logger = Logger.getLogger(EnrolleeService.class);
+    private static final Logger logger = LogManager.getLogger(EnrolleeService.class);
     private static final String PATH_TO_UPLOADED_FILES_APP =
             "d:\\uploaded-files\\enrollee-system";
     private static final String USER_UPLOAD_IMAGES_DIR = "user-images";

@@ -1,8 +1,9 @@
 package by.epam.receptionenrollee.mail;
 
 import com.sun.mail.smtp.SMTPTransport;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.Properties;
 
 public class GoogleMail {
-    private static final Logger logger = Logger.getLogger(GoogleMail.class);
+    private static final Logger logger = LogManager.getLogger(GoogleMail.class);
     private String username;
     private String password;
     private String title;

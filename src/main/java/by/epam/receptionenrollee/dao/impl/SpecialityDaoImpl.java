@@ -5,23 +5,17 @@ import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.dao.SpecialityDao;
 import by.epam.receptionenrollee.entity.Speciality;
-import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.service.EducationInformation;
 import by.epam.receptionenrollee.sql.SqlQuery;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_FACULTY;
-import static by.epam.receptionenrollee.command.RequestParam.PARAM_NAME_SPECIALITY;
 
 public class SpecialityDaoImpl extends AbstractDao<Speciality> implements SpecialityDao {
     private static final Logger logger = LogManager.getLogger(SpecialityDaoImpl.class);

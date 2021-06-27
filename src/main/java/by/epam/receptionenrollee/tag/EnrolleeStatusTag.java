@@ -3,7 +3,6 @@ package by.epam.receptionenrollee.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-@SuppressWarnings("serial")
 public class EnrolleeStatusTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {

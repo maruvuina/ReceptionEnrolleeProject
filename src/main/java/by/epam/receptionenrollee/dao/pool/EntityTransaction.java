@@ -2,9 +2,9 @@ package by.epam.receptionenrollee.dao.pool;
 
 import by.epam.receptionenrollee.dao.AbstractDao;
 import by.epam.receptionenrollee.exception.PoolException;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;

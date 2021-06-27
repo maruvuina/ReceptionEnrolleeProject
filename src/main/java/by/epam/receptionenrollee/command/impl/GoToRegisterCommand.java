@@ -7,7 +7,6 @@ import by.epam.receptionenrollee.resource.ConfigurationManager;
 import static by.epam.receptionenrollee.command.PagePath.GO_TO_REGISTER;
 
 public class GoToRegisterCommand implements ActionCommand {
-
     @Override
     public String execute(SessionRequestContent sessionRequestContent) {
         return ConfigurationManager.getProperty(GO_TO_REGISTER);
