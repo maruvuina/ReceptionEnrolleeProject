@@ -88,7 +88,7 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
                 educationInformation.setFacultyName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FACULTY_NAME));
                 educationInformation.setSpecialityName(resultSet.getString(ColumnLabel.COLUMN_LABEL_SPECIALITY_NAME));
             } else {
-                throw new DaoException("Getting specialty_name, faculty_name failed, no id_speciality obtained.");
+                throw new DaoException("Getting speciality_name, faculty_name failed, no id_speciality obtained.");
             }
         } catch (SQLException e) {
             logger.log(Level.ERROR,"Error while trying to get faculty and speciality names: ", e);

@@ -14,7 +14,7 @@ public class ColumnLabel {
 
     public static final String COLUMN_LABEL_ID_SPECIALITY = "id_speciality";
     public static final String COLUMN_LABEL_ID_FACULTY_FK = "id_faculty_fk";
-    public static final String COLUMN_LABEL_SPECIALITY_NAME = "specialty_name";
+    public static final String COLUMN_LABEL_SPECIALITY_NAME = "speciality_name";
     public static final String COLUMN_LABEL_PLAN = "plan";
 
     public static final String COLUMN_LABEL_FACULTY_NAME = "faculty_name";
