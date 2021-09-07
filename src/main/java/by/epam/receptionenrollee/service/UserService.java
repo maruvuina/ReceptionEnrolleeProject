@@ -36,7 +36,6 @@ public class UserService {
     }
 
     public User getUserByEmailPassword(String email, String password) throws ServiceException {
-        System.out.println(email + " ----------------------------- " + password);
         User user;
         UserDaoImpl userDaoImpl = DaoFactory.getInstance().getUserDao();
         EntityTransaction transaction = new EntityTransaction();
