@@ -110,8 +110,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
                 user.setLastName(resultSet.getString(ColumnLabel.COLUMN_LABEL_LAST_NAME));
                 user.setEmail(resultSet.getString(ColumnLabel.COLUMN_LABEL_EMAIL));
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             logger.log(Level.ERROR, "Error while trying find user first, last name, email by user id: ", e);
             throw new DaoException(e);
         }
