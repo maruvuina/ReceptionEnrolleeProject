@@ -5,7 +5,7 @@ import by.epam.receptionenrollee.dao.pool.EntityTransaction;
 import by.epam.receptionenrollee.entity.*;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
-import by.epam.receptionenrollee.factory.DaoFactory;
+import by.epam.receptionenrollee.dao.DaoFactory;
 import by.epam.receptionenrollee.util.TranslatorDataType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;

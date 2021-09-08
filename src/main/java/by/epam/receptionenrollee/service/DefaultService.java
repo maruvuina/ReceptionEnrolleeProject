@@ -1,6 +1,6 @@
 package by.epam.receptionenrollee.service;
 
-import by.epam.receptionenrollee.resource.ConfigurationManager;
+import by.epam.receptionenrollee.manager.ConfigurationManager;
 
 public final class DefaultService {
     private String path = ConfigurationManager.getProperty("path.page.login");

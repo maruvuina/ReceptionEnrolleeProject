@@ -6,7 +6,7 @@ import by.epam.receptionenrollee.entity.RoleEnum;
 import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.exception.ServiceException;
-import by.epam.receptionenrollee.factory.DaoFactory;
+import by.epam.receptionenrollee.dao.DaoFactory;
 import by.epam.receptionenrollee.util.HashUtil;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
