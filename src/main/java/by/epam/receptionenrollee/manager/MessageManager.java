@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.resource;
+package by.epam.receptionenrollee.manager;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
