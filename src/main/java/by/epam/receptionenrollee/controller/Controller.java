@@ -4,8 +4,8 @@ import by.epam.receptionenrollee.command.ActionCommand;
 import by.epam.receptionenrollee.command.ActionFactory;
 import by.epam.receptionenrollee.dao.pool.CustomConnectionPool;
 import by.epam.receptionenrollee.service.SessionRequestContent;
-import by.epam.receptionenrollee.resource.ConfigurationManager;
-import by.epam.receptionenrollee.resource.MessageManager;
+import by.epam.receptionenrollee.manager.ConfigurationManager;
+import by.epam.receptionenrollee.manager.MessageManager;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
