@@ -16,7 +16,7 @@
         <div class="wrapper">
             <div class="header-row">
                 <div class="logo">
-                    <a class="site-logo" href="<c:url value="/jsp/enrollee/edit_enrollee_data.jsp"/>">
+                    <a class="site-logo">
                         <img src="<c:url value="/resources/img/logo-bsu-enrollee.png"/>" alt="logo"/>
                     </a>
                 </div>

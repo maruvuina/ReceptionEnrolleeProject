@@ -4,11 +4,12 @@ import by.epam.receptionenrollee.command.ActionCommand;
 import by.epam.receptionenrollee.service.SessionRequestContent;
 import by.epam.receptionenrollee.service.DefaultService;
 
-
 public class LogoutCommand implements ActionCommand {
-    private DefaultService receiver = new DefaultService();
+    private DefaultService receiver;
 
-    public LogoutCommand() {}
+    public LogoutCommand() {
+        this.receiver = new DefaultService();
+    }
 
     @Override
     public String execute(SessionRequestContent sessionRequestContent) {
