@@ -81,7 +81,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
                 throw new DaoException("Getting enrollee ID failed by username, no ID obtained.");
             }
         } catch (SQLException e) {
-            logger.error("Error while trying to get enrollee id by user id: " + e);
+            logger.log(Level.ERROR, "Error while trying to get enrollee id by user id: ", e);
         }
         return idEnrollee;
     }

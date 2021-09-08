@@ -32,12 +32,12 @@ public abstract class AbstractDao<T extends Entity> {
         this.mapperFromDatabase = mapperFromDatabase;
     }
 
-    protected List<T> findAll(Class t, String sqlGetAllQuery) throws DaoException {
+    protected List<T> findAll(Class clazz, String sqlGetAllQuery) throws DaoException {
         List<T> items = new ArrayList<>();
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlGetAllQuery);
             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                T item = getItemInstance(t);
+                T item = getItemInstance(clazz);
                 mapperFromDatabase.map(resultSet, item);
                 items.add(item);
             }
@@ -48,13 +48,13 @@ public abstract class AbstractDao<T extends Entity> {
         return items;
     }
 
-    protected <V> List<T> findAllByValue(Class t, String sqlSelectByParameter, V value) throws DaoException {
+    protected <V> List<T> findAllByValue(Class clazz, String sqlSelectByParameter, V value) throws DaoException {
         List<T> items = new ArrayList<>();
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                T item = getItemInstance(t);
+                T item = getItemInstance(clazz);
                 mapperFromDatabase.map(resultSet, item);
                 items.add(item);
             }
@@ -65,8 +65,8 @@ public abstract class AbstractDao<T extends Entity> {
         return items;
     }
 
-    protected <V> T findByValue(Class t, String sqlSelectByParameter, V value) throws DaoException {
-        T item = getItemInstance(t);
+    protected <V> T findByValue(Class clazz, String sqlSelectByParameter, V value) throws DaoException {
+        T item = getItemInstance(clazz);
         try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -129,12 +129,12 @@ public abstract class AbstractDao<T extends Entity> {
         return result;
     }
 
-    /** Private method witch returns a concrete instance on entity */
+    /** Private method witch returns a concrete instance of entity */
     @SuppressWarnings("unchecked")
-    private T getItemInstance(Class t) {
+    private T getItemInstance(Class clazz) {
         T item = null;
         try {
-            item = (T) t.getDeclaredConstructor().newInstance();
+            item = (T) clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
                 NoSuchMethodException | InvocationTargetException e) {
             logger.log(Level.ERROR,"Error while get a concrete instance on entity: ", e);

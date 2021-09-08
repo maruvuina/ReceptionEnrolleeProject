@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.factory;
+package by.epam.receptionenrollee.dao;
 
 import by.epam.receptionenrollee.dao.impl.*;
 

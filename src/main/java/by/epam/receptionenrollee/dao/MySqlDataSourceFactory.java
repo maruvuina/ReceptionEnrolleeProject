@@ -1,4 +1,4 @@
-package by.epam.receptionenrollee.factory;
+package by.epam.receptionenrollee.dao;
 
 import by.epam.receptionenrollee.manager.DatabaseManager;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.SQLException;
+
 @Deprecated
 public class MySqlDataSourceFactory {
     private static final Logger logger = LogManager.getLogger(MySqlDataSourceFactory.class);
