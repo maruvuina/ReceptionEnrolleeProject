@@ -8,7 +8,7 @@ public class PagePath {
     public static final String USER = "path.page.user";
     public static final String GO_TO_REGISTER = "path.page.goto_register";
 
-    public static final String COMPITITION_REGISTER = "path.page.compitition_register";
+    public static final String COMPITITION_REGISTER = "path.page.competition_register";
     public static final String ENROLLEES_BY_FACULTY = "path.page.enrollees_by_faculty";
 
     public static final String NOTIFICATION_ENROLLEE = "path.page.notificate_enrollee";
