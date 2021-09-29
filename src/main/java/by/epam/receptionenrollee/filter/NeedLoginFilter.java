@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = { "/jsp/app/*" })
+@WebFilter(filterName = "needLogin", urlPatterns = { "/jsp/app/*" })
 public class NeedLoginFilter implements Filter  {
 
     @Override
