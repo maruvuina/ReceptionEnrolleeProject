@@ -12,3 +12,9 @@ __Final EPAM project__
 
 **Database shreme**
 ![](images/database-reception-enrollee-system.png)
+
+**Login page**
+![](images/login-page.png)
+
+**User page**
+![](images/user-page.png)
