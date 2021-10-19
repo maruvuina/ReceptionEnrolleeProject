@@ -25,7 +25,7 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
             preparedStatement.setString(1, faculty.getFacultyName());
             preparedStatement.setString(2, faculty.getFirstExam());
             preparedStatement.setString(3, faculty.getSecondExam());
-            preparedStatement.setString(4, faculty.getThridExam());
+            preparedStatement.setString(4, faculty.getThirdExam());
         };
         super.setMapperToDatabase(mapperToDatabase);
         Mapper<ResultSet, Faculty> mapperFromDatabase = (ResultSet resultSet, Faculty faculty) -> {
@@ -33,7 +33,7 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
             faculty.setFacultyName(resultSet.getString(ColumnLabel.COLUMN_LABEL_FACULTY_NAME));
             faculty.setFirstExam(resultSet.getString(ColumnLabel.COLUMN_LABEL_TEST_ONE));
             faculty.setSecondExam(resultSet.getString(ColumnLabel.COLUMN_LABEL_TEST_TWO));
-            faculty.setThridExam(resultSet.getString(ColumnLabel.COLUMN_LABEL_TEST_THREE));
+            faculty.setThirdExam(resultSet.getString(ColumnLabel.COLUMN_LABEL_TEST_THREE));
         };
         super.setMapperFromDatabase(mapperFromDatabase);
     }

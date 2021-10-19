@@ -243,4 +243,6 @@ public class SqlQuery {
     @Language("MySQL")
     public static final String ENROLLEE_UPDATE_ATTEMPT =
             "UPDATE enrollee SET `attempt` = `attempt` - 1 WHERE `id_user_fk` = ?";
+
+    private SqlQuery() {}
 }

@@ -10,4 +10,6 @@ public class ParamRegex {
     public static final String SCHOOL_MARK_REGEX = "^([1-9]|10)$";
     public static final String ENTRANCE_EXAMINATION_MARK_REGEX = "^(?:100|[1-9]?[0-9])$";
     public static final String STRING_REGEX = "^([^0-9]*)$";
+
+    private ParamRegex() {}
 }

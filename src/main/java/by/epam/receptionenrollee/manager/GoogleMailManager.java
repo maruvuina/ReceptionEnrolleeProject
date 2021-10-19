@@ -11,7 +11,9 @@ public class GoogleMailManager {
     public static final String MAIL_SMTPS_AUTH = "mail.smtps.auth";
     public static final String MAIL_TRANSPORT_PROTOCOL = "mail.transport.protocol";
     public static final String MAIL_SMTP_QUITWAIT = "mail.smtp.quitwait";
+    public static final String MAIL_PASSWORD = "mail.password";
     private static final String RESOURCE_NAME = "googlemail";
+
     private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(RESOURCE_NAME);
 
     private GoogleMailManager() {}

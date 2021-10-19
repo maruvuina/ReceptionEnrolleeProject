@@ -7,6 +7,7 @@ import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.mail.GoogleMail;
 import by.epam.receptionenrollee.manager.ConfigurationManager;
 import by.epam.receptionenrollee.manager.DatabaseManager;
+import by.epam.receptionenrollee.manager.GoogleMailManager;
 import by.epam.receptionenrollee.manager.MessageManager;
 import by.epam.receptionenrollee.validator.Validator;
 import org.apache.logging.log4j.Level;
@@ -223,7 +224,7 @@ public class CommunicationService {
         if (Validator.isValidEmail(adminEmail) && Validator.isValidEmail(enrolleeEmail)) {
             String title = sessionRequestContent.getParameter(PARAM_NAME_MESSAGE_SUBJECT);
             String message = sessionRequestContent.getParameter(PARAM_NAME_MESSAGE);
-            GoogleMail googleMail = new GoogleMail(adminEmail, DatabaseManager.getProperty(DatabaseManager.PASSWORD), title, enrolleeEmail, message);
+            GoogleMail googleMail = new GoogleMail(adminEmail, GoogleMailManager.getProperty(GoogleMailManager.MAIL_PASSWORD), title, enrolleeEmail, message);
             googleMail.sendNotificationToEnrollee();
             try {
                 String enrolleeStatus = sessionRequestContent.getParameter(ENROLLEE_STATUS);
