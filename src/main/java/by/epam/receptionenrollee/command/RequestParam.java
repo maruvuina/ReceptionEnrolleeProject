@@ -89,4 +89,6 @@ public class RequestParam {
     public static final String MIDDLE_NAME_TO_CHANGE = "middleNameToChange";
     public static final String PARAM_NAME_CHANGE_CASE_INFORMATION = "changeCase";
     public static final String PARAM_NAME_ATTEMPT = "attempt";
+
+    private RequestParam() {}
 }

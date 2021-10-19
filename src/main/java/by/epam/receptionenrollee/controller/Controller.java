@@ -15,12 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 import static by.epam.receptionenrollee.command.PagePath.INDEX;
-import static by.epam.receptionenrollee.command.RequestParam.*;
 
-@WebServlet(name = "Controller", urlPatterns = {"/controller"})
+@WebServlet(urlPatterns = {"/controller"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 5,
         maxFileSize = 1024 * 1024 * 10,
@@ -45,18 +43,7 @@ public class Controller extends HttpServlet {
             throws ServletException, IOException {
         String page;
         ActionFactory client = ActionFactory.getInstance();
-        Optional<ActionCommand> commandOptional =
-                client.defineCommand(request.getParameter("command"));
-        ActionCommand command = commandOptional
-                .orElse(
-                        v -> {
-                            request.setAttribute("wrongAction",
-                                    request.getParameter("command")
-                            + new MessageManager((String) request
-                                            .getSession()
-                                            .getAttribute(PARAM_NAME_LANGUAGE_SITE)).getProperty("message.wrongaction"));
-                                return null;
-                        });
+        ActionCommand command = client.defineCommand(request);
         SessionRequestContent sessionRequestContent = new SessionRequestContent(request);
         page = command.execute(sessionRequestContent);
         sessionRequestContent.updateRequestSession(request);
