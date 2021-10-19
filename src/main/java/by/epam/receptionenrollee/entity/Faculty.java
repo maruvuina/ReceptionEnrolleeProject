@@ -1,22 +1,23 @@
 package by.epam.receptionenrollee.entity;
 
+
 public class Faculty extends Entity {
     private String facultyName;
     private String firstExam;
     private String secondExam;
-    private String thridExam;
+    private String thirdExam;
 
     public Faculty() {}
 
     public Faculty(int idFaculty, String facultyName,
                    String firstExam,
                    String secondExam,
-                   String thridExam) {
+                   String thirdExam) {
         super(idFaculty);
         this.facultyName = facultyName;
         this.firstExam = firstExam;
         this.secondExam= secondExam;
-        this.thridExam = thridExam;
+        this.thirdExam = thirdExam;
     }
 
     public String getFacultyName() {
@@ -43,12 +44,12 @@ public class Faculty extends Entity {
         this.secondExam = secondExam;
     }
 
-    public String getThridExam() {
-        return thridExam;
+    public String getThirdExam() {
+        return thirdExam;
     }
 
-    public void setThridExam(String thridExam) {
-        this.thridExam = thridExam;
+    public void setThirdExam(String thirdExam) {
+        this.thirdExam = thirdExam;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class Faculty extends Entity {
         sb.append("facultyName='").append(facultyName).append('\'');
         sb.append(", firstExam='").append(firstExam).append('\'');
         sb.append(", secondExam='").append(secondExam).append('\'');
-        sb.append(", thridExam='").append(thridExam).append('\'');
+        sb.append(", thridExam='").append(thirdExam).append('\'');
         sb.append('}');
         return sb.toString();
     }
@@ -71,24 +72,19 @@ public class Faculty extends Entity {
             return false;
         }
         Faculty faculty = (Faculty) o;
-        if (getFacultyName() != null ? !getFacultyName().equals(faculty.getFacultyName()) : faculty.getFacultyName() != null) {
-            return false;
-        }
-        if (getFirstExam() != null ? !getFirstExam().equals(faculty.getFirstExam()) : faculty.getFirstExam() != null) {
-            return false;
-        }
-        if (getSecondExam() != null ? !getSecondExam().equals(faculty.getSecondExam()) : faculty.getSecondExam() != null) {
-            return false;
-        }
-        return getThridExam() != null ? getThridExam().equals(faculty.getThridExam()) : faculty.getThridExam() == null;
+        return (facultyName == faculty.facultyName || facultyName != null && facultyName.equals(faculty.facultyName)) &&
+                (firstExam == faculty.firstExam || firstExam != null && firstExam.equals(faculty.firstExam)) &&
+                (secondExam == faculty.secondExam || secondExam != null && secondExam.equals(faculty.secondExam)) &&
+                (thirdExam == faculty.thirdExam || thirdExam != null && thirdExam.equals(faculty.thirdExam));
     }
 
     @Override
     public int hashCode() {
-        int result = facultyName.hashCode();
-        result = 17 * result + firstExam.hashCode();
-        result = 31 * result + secondExam.hashCode();
-        result = 17 * result + thridExam.hashCode();
+        int result = super.hashCode();
+        result = 31 * result + (facultyName != null ? facultyName.hashCode() : 0);
+        result = 17 * result + (firstExam != null ? firstExam.hashCode() : 0);
+        result = 31 * result + (secondExam != null ? secondExam.hashCode() : 0);
+        result = 17 * result + (thirdExam != null ? thirdExam.hashCode() : 0);
         return result;
     }
 }

@@ -61,20 +61,17 @@ public class Speciality extends Entity {
             return false;
         }
         Speciality that = (Speciality) o;
-        if (getPlan() != that.getPlan()) {
-            return false;
-        }
-        if (getIdDepartment() != that.getIdDepartment()) {
-            return false;
-        }
-        return getSpecialityName() != null ? getSpecialityName().equals(that.getSpecialityName()) : that.getSpecialityName() == null;
+        return plan == that.plan &&
+                idDepartment == that.idDepartment &&
+                (specialityName == that.specialityName || specialityName != null && specialityName.equals(that.specialityName));
     }
 
     @Override
     public int hashCode() {
-        int result = specialityName.hashCode();
-        result = 31 * result + plan;
-        result = 17 * result + idDepartment;
+        int result = super.hashCode();
+        result = 31 * result + (specialityName != null ? specialityName.hashCode() : 0);
+        result = 17 * result + plan;
+        result = 31 * result + idDepartment;
         return result;
     }
 }

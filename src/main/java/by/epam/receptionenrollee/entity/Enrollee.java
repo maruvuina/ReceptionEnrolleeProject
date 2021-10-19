@@ -1,5 +1,6 @@
 package by.epam.receptionenrollee.entity;
 
+
 public class Enrollee extends Entity {
     private int idUser;
     private int idSpeciality;
@@ -101,37 +102,25 @@ public class Enrollee extends Entity {
             return false;
         }
         Enrollee enrollee = (Enrollee) o;
-        if (getIdUser() != enrollee.getIdUser()) {
-            return false;
-        }
-        if (getIdSpeciality() != enrollee.getIdSpeciality()) {
-            return false;
-        }
-        if (getAttempt() != enrollee.getAttempt()) {
-            return false;
-        }
-        if (getBirthday() != null ? !getBirthday().equals(enrollee.getBirthday()) : enrollee.getBirthday() != null) {
-            return false;
-        }
-        if (getDistrict() != null ? !getDistrict().equals(enrollee.getDistrict()) : enrollee.getDistrict() != null) {
-            return false;
-        }
-        if (getLocality() != null ? !getLocality().equals(enrollee.getLocality()) : enrollee.getLocality() != null) {
-            return false;
-        }
-        return getAvatar() != null ? getAvatar().equals(enrollee.getAvatar()) : enrollee.getAvatar() == null;
+        return idUser == enrollee.idUser &&
+                idSpeciality == enrollee.idSpeciality &&
+                attempt == enrollee.attempt &&
+                (birthday == enrollee.birthday || birthday != null && birthday.equals(enrollee.birthday)) &&
+                (district == enrollee.district || district != null && district.equals(enrollee.district)) &&
+                (locality == enrollee.locality || locality != null && locality.equals(enrollee.locality)) &&
+                (avatar == enrollee.avatar || avatar != null && avatar.equals(enrollee.avatar));
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + getIdUser();
-        result = 17 * result + getIdSpeciality();
-        result = 31 * result + (getBirthday() != null ? getBirthday().hashCode() : 0);
-        result = 17 * result + (getDistrict() != null ? getDistrict().hashCode() : 0);
-        result = 31 * result + (getLocality() != null ? getLocality().hashCode() : 0);
-        result = 17 * result + (getAvatar() != null ? getAvatar().hashCode() : 0);
-        result = 31 * result + getAttempt();
+        result = 31 * result + idUser;
+        result = 17 * result + idSpeciality;
+        result = 31 * result + attempt;
+        result = 17 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (district != null ? district.hashCode() : 0);
+        result = 17 * result + (locality != null ? locality.hashCode() : 0);
+        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
         return result;
     }
 }

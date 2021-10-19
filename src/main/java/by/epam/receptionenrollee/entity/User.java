@@ -1,5 +1,6 @@
 package by.epam.receptionenrollee.entity;
 
+
 public class User extends Entity {
     private String firstName;
     private String lastName;
@@ -110,22 +111,12 @@ public class User extends Entity {
             return false;
         }
         User user = (User) o;
-        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) {
-            return false;
-        }
-        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) {
-            return false;
-        }
-        if (middleName != null ? !middleName.equals(user.middleName) : user.middleName != null) {
-            return false;
-        }
-        if (email != null ? !email.equals(user.email) : user.email != null) {
-            return false;
-        }
-        if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null) {
-            return false;
-        }
-        return getRoleEnum() == user.getRoleEnum();
+        return (firstName == user.firstName || firstName != null && firstName.equals(user.firstName)) &&
+                (lastName == user.lastName || lastName != null && lastName.equals(user.lastName)) &&
+                (middleName == user.middleName || middleName != null && middleName.equals(user.middleName)) &&
+                (email == user.email || email != null && email.equals(user.email)) &&
+                (password == user.password || password != null && password.equals(user.password)) &&
+                (roleEnum == user.roleEnum || roleEnum != null && roleEnum.equals(user.roleEnum));
     }
 
     @Override
@@ -135,8 +126,8 @@ public class User extends Entity {
         result = 17 * result + (lastName != null ? lastName.hashCode() : 0);
         result = 31 * result + (middleName != null ? middleName.hashCode() : 0);
         result = 17 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-        result = 17 * result + (getRoleEnum() != null ? getRoleEnum().hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 17 * result + (roleEnum != null ? roleEnum.hashCode() : 0);
         return result;
     }
 }

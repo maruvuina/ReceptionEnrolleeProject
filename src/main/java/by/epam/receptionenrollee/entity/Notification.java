@@ -52,16 +52,15 @@ public class Notification extends Entity {
             return false;
         }
         Notification that = (Notification) o;
-        if (getIdEnrollee() != that.getIdEnrollee()) {
-            return false;
-        }
-        return isEnrolment() == that.isEnrolment();
+        return idEnrollee == that.idEnrollee &&
+                enrolment == that.enrolment;
     }
 
     @Override
     public int hashCode() {
-        int result = idEnrollee;
-        result = 31 * result + Boolean.valueOf(enrolment).hashCode();
+        int result = super.hashCode();
+        result = 31 * result + idEnrollee;
+        result = 17 * result + Boolean.valueOf(enrolment).hashCode();
         return result;
     }
 }

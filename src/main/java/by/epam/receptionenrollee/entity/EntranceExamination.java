@@ -1,5 +1,6 @@
 package by.epam.receptionenrollee.entity;
 
+
 public class EntranceExamination extends Entity {
     private int idEnrollee;
     private int languageMark;
@@ -71,22 +72,17 @@ public class EntranceExamination extends Entity {
             return false;
         }
         EntranceExamination that = (EntranceExamination) o;
-        if (getIdEnrollee() != that.getIdEnrollee()) {
-            return false;
-        }
-        if (getLanguageMark() != that.getLanguageMark()) {
-            return false;
-        }
-        if (getFirstProfileExamMark() != that.getFirstProfileExamMark()) {
-            return false;
-        }
-        return getSecondProfileExamMark() == that.getSecondProfileExamMark();
+        return idEnrollee == that.idEnrollee &&
+                languageMark == that.languageMark &&
+                firstProfileExamMark == that.firstProfileExamMark &&
+                secondProfileExamMark == that.secondProfileExamMark;
     }
 
     @Override
     public int hashCode() {
-        int result = idEnrollee;
-        result = 31 * result + languageMark;
+        int result = super.hashCode();
+        result = 31 * result + idEnrollee;
+        result = 17 * result + languageMark;
         result = 17 * result + firstProfileExamMark;
         result = 31 * result + secondProfileExamMark;
         return result;

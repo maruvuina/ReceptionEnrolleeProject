@@ -40,11 +40,11 @@ public class SchoolSubject extends Entity {
             return false;
         }
         SchoolSubject that = (SchoolSubject) o;
-        return getSubjectName() != null ? getSubjectName().equals(that.getSubjectName()) : that.getSubjectName() == null;
+        return subjectName == that.subjectName || subjectName != null && subjectName.equals(that.subjectName);
     }
 
     @Override
     public int hashCode() {
-        return 31 * subjectName.hashCode();
+        return 31 * super.hashCode() + (subjectName != null ? subjectName.hashCode() : 0);
     }
 }

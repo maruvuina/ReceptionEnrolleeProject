@@ -58,20 +58,17 @@ public class SchoolMark extends Entity {
             return false;
         }
         SchoolMark that = (SchoolMark) o;
-        if (getIdSubject() != that.getIdSubject()) {
-            return false;
-        }
-        if (getIdEmplloee() != that.getIdEmplloee()) {
-            return false;
-        }
-        return getMark() == that.getMark();
+        return idSubject == that.idSubject &&
+                idEmplloee == that.idEmplloee &&
+                mark == that.mark;
     }
 
     @Override
     public int hashCode() {
-        int result = idEmplloee;
-        result = 31 * result + idSubject;
-        result = 17 * result + mark;
+        int result = super.hashCode();
+        result = 31 * result + idEmplloee;
+        result = 17 * result + idSubject;
+        result = 31 * result + mark;
         return result;
     }
 }
