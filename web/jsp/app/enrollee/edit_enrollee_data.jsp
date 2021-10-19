@@ -9,6 +9,7 @@
     <link rel="icon" type="image/png" href="<c:url value="/resources/img/icons/favicon.ico"/>">
     <script src="<c:url value="/resources/js/jquery-3.4.1.js"/>"></script>
     <link rel="stylesheet" href="<c:url value="/resources/css/edit_enrollee_data.css"/>">
+    <script src="<c:url value="/resources/js/editDataPage.js"/>"></script>
     <title><fmt:message key="user.page.welcomtitle"/></title>
 </head>
 <body>
@@ -83,9 +84,9 @@
                                 <div class="error" id="fullNameError"></div>
                                 <h3><fmt:message key="register.page.birthday"/></h3>
                                 <div class="birthday">
-                                    <input id="month" required type="text" name="month" placeholder="<fmt:message key="register.page.birth_month"/>"/>
-                                    <input id="day" required type="text" name="day" placeholder="<fmt:message key="register.page.birth_day"/>"/>
-                                    <input id="year" required type="text" name="year" placeholder="<fmt:message key="register.page.birth_year"/>"/>
+                                    <input id="month" required type="number" min="1" max="12" name="month" placeholder="<fmt:message key="register.page.birth_month"/>"/>
+                                    <input id="day" required type="number" min="1" max="31" name="day" placeholder="<fmt:message key="register.page.birth_day"/>"/>
+                                    <input id="year" required type="number" min="1900" name="year" placeholder="<fmt:message key="register.page.birth_year"/>"/>
                                 </div>
                                 <div class="error" id="birthdayError"></div>
                             </div>

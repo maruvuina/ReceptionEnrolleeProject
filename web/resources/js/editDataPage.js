@@ -468,17 +468,28 @@ function deleteRequiredAttributeByIdElement() {
     document.getElementById("year").required = false;
 }
 
+function setRequiredAttributeByIdElement() {
+    document.getElementById("first-name").required = true;
+    document.getElementById("last-name").required = true;
+    document.getElementById("middle-name").required = true;
+    document.getElementById("day").required = true;
+    document.getElementById("month").required = true;
+    document.getElementById("year").required = true;
+}
+
 function setChoosingInformation() {
     let checkbox1 = document.getElementById('checkbox-1');
     let checkbox2 = document.getElementById('checkbox-2');
     let changeCase = document.getElementById('changeCase');
     if (checkbox1.checked && checkbox2.checked) {
         changeCase.value = "2";
+        setRequiredAttributeByIdElement();
     } else if (checkbox2.checked) {
         changeCase.value = "1";
         deleteRequiredAttributeByIdElement();
     } else if (checkbox1.checked) {
         changeCase.value = "0";
+        setRequiredAttributeByIdElement();
     } else {
         changeCase.value = "";
     }

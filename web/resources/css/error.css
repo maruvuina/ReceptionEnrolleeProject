@@ -1,0 +1,19 @@
+html {
+    height: 100%;
+}
+
+body{
+    font-family: 'Roboto', sans-serif;
+    color: #888;
+    margin: 0;
+}
+
+#main{
+    text-align: center;
+}
+
+.fof h1{
+    font-size: 50px;
+    display: inline-block;
+    padding-right: 12px;
+}
