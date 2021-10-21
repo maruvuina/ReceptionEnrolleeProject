@@ -58,13 +58,13 @@
             <h4><fmt:message key="register.page.birthday"/></h4>
             <div class="birthday">
                 <label>
-                    <input id="month" required type="text" name="month" placeholder="<fmt:message key="register.page.birth_month"/>"/>
+                    <input id="month" required type="number" min="1" max="12" name="month" placeholder="<fmt:message key="register.page.birth_month"/>"/>
                 </label>
                 <label class="sec-label-birth">
-                    <input id="day" required type="text" name="day" placeholder="<fmt:message key="register.page.birth_day"/>"/>
+                    <input id="day" required type="number" min="1" max="31" name="day" placeholder="<fmt:message key="register.page.birth_day"/>"/>
                 </label>
                 <label>
-                    <input id="year" required type="text" name="year" placeholder="<fmt:message key="register.page.birth_year"/>"/>
+                    <input id="year" required type="number" min="1900" name="year" placeholder="<fmt:message key="register.page.birth_year"/>"/>
                 </label>
             </div>
             <h4><fmt:message key="register.page.address_info"/></h4>
@@ -99,7 +99,7 @@
                         <label for="lang_bel"><fmt:message key="register.page.lang_bel"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="lang_bel" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="lang_bel" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -107,7 +107,7 @@
                         <fmt:message key="register.page.lang_bel_lit"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="lang_bel_lit" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="lang_bel_lit" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -115,7 +115,7 @@
                         <label for="lang_rus"><fmt:message key="register.page.lang_rus"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="lang_rus" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="lang_rus" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -123,7 +123,7 @@
                         <label for="lang_rus_lit"><fmt:message key="register.page.lang_rus_lit"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="lang_rus_lit" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="lang_rus_lit" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -131,7 +131,7 @@
                         <label for="foreign_lang"><fmt:message key="register.page.foreign_lang"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="foreign_lang" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="foreign_lang" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -139,7 +139,7 @@
                         <label for="maths"><fmt:message key="register.page.maths"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="maths" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="maths" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -147,7 +147,7 @@
                         <label for="informatics"><fmt:message key="register.page.informatics"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="informatics" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="informatics" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -155,7 +155,7 @@
                         <label for="bel_his"><fmt:message key="register.page.bel_his"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="bel_his" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="bel_his" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -163,7 +163,7 @@
                         <label for="world_his"><fmt:message key="register.page.world_his"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="world_his" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="world_his" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -171,7 +171,7 @@
                         <label for="social_science"><fmt:message key="register.page.social_science"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="social_science" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="social_science" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -179,7 +179,7 @@
                         <label for="geo_sub"><fmt:message key="faculty.geo_sub"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="geo_sub" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="geo_sub" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -187,7 +187,7 @@
                         <label for="bio_sub"><fmt:message key="faculty.bio_sub"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="bio_sub" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="bio_sub" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -195,7 +195,7 @@
                         <label for="phys_sub"><fmt:message key="register.page.phys_sub"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="phys_sub" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="phys_sub" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -203,7 +203,7 @@
                         <label for="astro"><fmt:message key="register.page.astro"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="astro" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="astro" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -211,7 +211,7 @@
                         <label for="chem"><fmt:message key="faculty.chem_school_sub"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="chem" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="chem" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -219,7 +219,7 @@
                         <label for="training"><fmt:message key="register.page.training"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="training" required type="text" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
+                        <input id="training" required type="number" min="1" max="10" name="school_mark" value="" placeholder="<fmt:message key="register.page.placeholder.mark"/>"/>
                     </div>
                 </div>
             </div>
@@ -232,7 +232,7 @@
                         <label for="exam1"><fmt:message key="register.page.exam1"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="exam1" required type="text" name="exam1" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
+                        <input id="exam1" required type="number" min="1" max="100" name="exam1" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -240,7 +240,7 @@
                         <label for="exam2"><fmt:message key="register.page.exam2"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="exam2" required type="text" name="exam2" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
+                        <input id="exam2" required type="number" min="1" max="100" name="exam2" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
                     </div>
                 </div>
                 <div class="row">
@@ -248,7 +248,7 @@
                         <label for="exam3"><fmt:message key="register.page.exam3"/></label>
                     </div>
                     <div class="right-column">
-                        <input id="exam3" required type="text" name="exam3" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
+                        <input id="exam3" required type="number" min="1" max="100" name="exam3" value="" placeholder="<fmt:message key="register.page.placeholder.score"/>"/>
                     </div>
                 </div>
             </div>
