@@ -112,15 +112,4 @@ public class EducationInformation {
     public void setAvatarEnrollee(String avatarEnrollee) {
         this.avatarEnrollee = avatarEnrollee;
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("EducationInformation{");
-        sb.append("enrolleeScore=").append(enrolleeScore);
-        sb.append(", enrolleePosition=").append(enrolleePosition);
-        sb.append(", enrolleesCount=").append(enrolleesCount);
-        sb.append(", facultyPlan=").append(facultyPlan);
-        sb.append('}');
-        return sb.toString();
-    }
 }

@@ -4,7 +4,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 
 public class HashUtil {
-
     private static final int HASH_ROUNDS = 12;
 
     private HashUtil() {}
@@ -16,7 +15,6 @@ public class HashUtil {
      * @return hash of the given string
      */
     public static String hashString(String string) {
-
         return BCrypt.hashpw(string, BCrypt.gensalt(HASH_ROUNDS));
     }
 

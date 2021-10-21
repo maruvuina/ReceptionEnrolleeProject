@@ -51,5 +51,5 @@ public class ColumnLabel {
     public static final String COLUMN_LABEL_FIRST_PROFILE_EXAM_MARK = "first_profile_exam_mark";
     public static final String COLUMN_LABEL_SECOND_PROFILE_EXAM_MARK = "second_profile_exam_mark";
 
-    public ColumnLabel() {}
+    private ColumnLabel() {}
 }

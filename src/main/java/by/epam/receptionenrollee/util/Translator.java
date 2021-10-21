@@ -1,6 +1,5 @@
 package by.epam.receptionenrollee.util;
 
-import by.epam.receptionenrollee.exception.TranslationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,12 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Translator {
-    private static final Logger logger = LogManager.getLogger(Translator.class);
     private static final String DEFAULT_LANGUAGE = String.valueOf(LanguageParam.RU_RU);
     private TranslatorDataType translatorDataType;
 
@@ -28,22 +22,14 @@ public class Translator {
         this.translatorDataType = translatorDataType;
     }
 
-    private String getDictionaryType() throws TranslationException {
-        String dicrionaryName;
-        switch (translatorDataType) {
-            case TRANSLATOR_FACULTY:
-                dicrionaryName = TranslationVocabulary.TRANSLATION_FACULTIES;
-                break;
-            case TRANSLATOR_SPECIALITY:
-                dicrionaryName = TranslationVocabulary.TRANSLATION_SPECIALITIES;
-                break;
-            default:
-                throw new TranslationException("No such dictionary.");
-        }
-        return dicrionaryName;
+    private String getDictionaryType() {
+        return switch (translatorDataType) {
+            case TRANSLATOR_FACULTY -> TranslationVocabulary.TRANSLATION_FACULTIES;
+            case TRANSLATOR_SPECIALITY -> TranslationVocabulary.TRANSLATION_SPECIALITIES;
+        };
     }
 
-    private String getDictionaryToTranslate(Language lang) throws TranslationException {
+    private String getDictionaryToTranslate(Language lang) {
         return String.format(String.valueOf(getDictionaryType()), lang);
     }
 
@@ -54,24 +40,12 @@ public class Translator {
     }
 
     private String getDictionary(String lang) {
-        String dictionary = null;
         LanguageParam countryLanguage = LanguageParam.valueOf(lang.toUpperCase());
-        try {
-            switch (countryLanguage) {
-                case RU_RU:
-                    dictionary = getDictionaryToTranslate(Language.RU);
-                    break;
-                case EN_US:
-                    dictionary = getDictionaryToTranslate(Language.EN);
-                    break;
-                case BE_BY:
-                    dictionary = getDictionaryToTranslate(Language.BE);
-                    break;
-            }
-        } catch (TranslationException e) {
-            logger.log(Level.ERROR, "Error while trying to get dictionary: ", e);
-        }
-        return dictionary;
+        return switch (countryLanguage) {
+            case RU_RU -> getDictionaryToTranslate(Language.RU);
+            case EN_US -> getDictionaryToTranslate(Language.EN);
+            case BE_BY -> getDictionaryToTranslate(Language.BE);
+        };
     }
 
     private Map<String, String> fillDictionary(Map<String, String> dictionary, String lang) {

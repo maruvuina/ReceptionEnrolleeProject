@@ -6,7 +6,6 @@ import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.ServiceException;
 import by.epam.receptionenrollee.mail.GoogleMail;
 import by.epam.receptionenrollee.manager.ConfigurationManager;
-import by.epam.receptionenrollee.manager.DatabaseManager;
 import by.epam.receptionenrollee.manager.GoogleMailManager;
 import by.epam.receptionenrollee.manager.MessageManager;
 import by.epam.receptionenrollee.validator.Validator;

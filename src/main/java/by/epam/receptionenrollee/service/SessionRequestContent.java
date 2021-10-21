@@ -109,7 +109,7 @@ public class SessionRequestContent {
         return isSessionInvalidate;
     }
 
-    public List<String> getParametersByName(String paratersName) {
-        return Arrays.asList(request.getParameterValues(paratersName));
+    public List<String> getParametersByName(String parametersName) {
+        return Arrays.asList(request.getParameterValues(parametersName));
     }
 }
