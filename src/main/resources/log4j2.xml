@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="info">
     <Properties>
         <property name="LOG_DIR">logs</property>
         <property name="ARCHIVE_LOG_DIR">${LOG_DIR}/archive</property>
         <property name="pattern_console">
-            %d{HH:mm:ss} [%t] %-5level %logger{1} - %msg%n
+            %d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %highlight{${LOG_LEVEL_PATTERN:-%5p}}{FATAL=red blink, ERROR=red, WARN=yellow bold, INFO=green, DEBUG=green bold, TRACE=blue} %style{${sys:PID}}{magenta} [%15.15t] %style{%-40.40C{1.}}{cyan} ----- %msg%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}
         </property>
         <property name="pattern_file">
             %d{dd MMM yyyy HH:mm:ss.SSS} [%t] %-5level %logger{5} - %msg%n
