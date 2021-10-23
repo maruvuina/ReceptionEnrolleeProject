@@ -5,7 +5,6 @@ import by.epam.receptionenrollee.dao.ColumnLabel;
 import by.epam.receptionenrollee.dao.EnrolleeDao;
 import by.epam.receptionenrollee.dao.Mapper;
 import by.epam.receptionenrollee.entity.Enrollee;
-import by.epam.receptionenrollee.entity.User;
 import by.epam.receptionenrollee.exception.DaoException;
 import by.epam.receptionenrollee.sql.SqlQuery;
 import org.apache.logging.log4j.Level;
@@ -61,12 +60,12 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
 
     @Override
     public boolean updateEnrollee(Enrollee enrollee) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for enrollee.");
     }
 
     @Override
     public boolean deleteEnrollee(Enrollee enrollee) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for enrollee.");
     }
 
     @Override

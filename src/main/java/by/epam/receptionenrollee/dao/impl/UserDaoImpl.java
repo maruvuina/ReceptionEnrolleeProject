@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 public class UserDaoImpl extends AbstractDao<User> implements UserDao {

@@ -36,8 +36,8 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
     }
 
     @Override
-    public List<Speciality> findSpeciality() throws DaoException {
-        return null;
+    public List<Speciality> findSpeciality() {
+        throw new UnsupportedOperationException("Invalid operation for speciality.");
     }
 
     @Override
@@ -47,17 +47,17 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
 
     @Override
     public boolean insertSpeciality(Speciality speciality) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for speciality.");
     }
 
     @Override
     public boolean updateSpeciality(Speciality speciality) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for speciality.");
     }
 
     @Override
     public boolean deleteSpeciality(Speciality speciality) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for speciality.");
     }
 
     public int getSpecialityIdByName(String specialityName, String facultyName) throws DaoException {

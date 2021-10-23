@@ -39,13 +39,13 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
     }
 
     @Override
-    public List<Faculty> findFaculties() throws DaoException {
-        return null;
+    public List<Faculty> findFaculties() {
+        throw new UnsupportedOperationException("Invalid operation for faculty.");
     }
 
     @Override
-    public Faculty findFacultyById(Integer id) throws DaoException {
-        return null;
+    public Faculty findFacultyById(Integer id) {
+        throw new UnsupportedOperationException("Invalid operation for faculty.");
     }
 
     @Override

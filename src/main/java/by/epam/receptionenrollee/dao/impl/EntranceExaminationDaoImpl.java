@@ -38,13 +38,13 @@ public class EntranceExaminationDaoImpl extends AbstractDao<EntranceExamination>
     }
 
     @Override
-    public List<EntranceExamination> findEntranceExaminations() throws DaoException {
-        return null;
+    public List<EntranceExamination> findEntranceExaminations() {
+        throw new UnsupportedOperationException("Invalid operation for entrance examination.");
     }
 
     @Override
-    public EntranceExamination findEntranceExaminationById(Integer id) throws DaoException {
-        return null;
+    public EntranceExamination findEntranceExaminationById(Integer id) {
+        throw new UnsupportedOperationException("Invalid operation for entrance examination.");
     }
 
     @Override
@@ -54,12 +54,12 @@ public class EntranceExaminationDaoImpl extends AbstractDao<EntranceExamination>
 
     @Override
     public boolean updateEntranceExamination(EntranceExamination entranceExamination) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for entrance examination.");
     }
 
     @Override
     public boolean deleteEntranceExamination(EntranceExamination entranceExamination) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for entrance examination.");
     }
 
     @Override

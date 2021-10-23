@@ -36,13 +36,13 @@ public class SchoolMarkDaoImpl extends AbstractDao<SchoolMark> implements School
     }
 
     @Override
-    public List<SchoolMark> findSchoolMarks() throws DaoException {
-        return null;
+    public List<SchoolMark> findSchoolMarks() {
+        throw new UnsupportedOperationException("Invalid operation for school mark.");
     }
 
     @Override
-    public SchoolMark findSchoolMarkById(Integer id) throws DaoException {
-        return null;
+    public SchoolMark findSchoolMarkById(Integer id) {
+        throw new UnsupportedOperationException("Invalid operation for school mark.");
     }
 
     @Override
@@ -52,12 +52,12 @@ public class SchoolMarkDaoImpl extends AbstractDao<SchoolMark> implements School
 
     @Override
     public boolean updateSchoolMark(SchoolMark schoolMark) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for school mark.");
     }
 
     @Override
     public boolean deleteSchoolMark(SchoolMark schoolMark) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for school mark.");
     }
 
     @Override

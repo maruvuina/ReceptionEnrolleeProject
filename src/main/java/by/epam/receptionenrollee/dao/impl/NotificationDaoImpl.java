@@ -35,13 +35,13 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
     }
 
     @Override
-    public List<Notification> findNotifications() throws DaoException {
-        return null;
+    public List<Notification> findNotifications() {
+        throw new UnsupportedOperationException("Invalid operation for notification.");
     }
 
     @Override
-    public Notification findNotificationById(Integer id) throws DaoException {
-        return null;
+    public Notification findNotificationById(Integer id) {
+        throw new UnsupportedOperationException("Invalid operation for notification.");
     }
 
     @Override
@@ -50,13 +50,13 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
     }
 
     @Override
-    public Notification updateNotification(Notification notification) throws DaoException {
-        return null;
+    public Notification updateNotification(Notification notification) {
+        throw new UnsupportedOperationException("Invalid operation for notification.");
     }
 
     @Override
     public boolean deleteNotification(Notification notification) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for notification.");
     }
 
     public boolean updateNotificationStatusByUserEmail(Notification notification, String userEmail) throws DaoException {

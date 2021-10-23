@@ -1,7 +1,5 @@
 package by.epam.receptionenrollee.dao.pool;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
-import com.mysql.cj.jdbc.MysqlDataSourceFactory;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
