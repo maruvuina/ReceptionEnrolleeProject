@@ -61,7 +61,7 @@ public class NotificationDaoImpl extends AbstractDao<Notification> implements No
 
     public boolean updateNotificationStatusByUserEmail(Notification notification, String userEmail) throws DaoException {
         boolean result;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.UPDATE_ENROLLEE_STATUS)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.UPDATE_ENROLLEE_STATUS)) {
             preparedStatement.setBoolean(1, notification.isEnrolment());
             preparedStatement.setString(2, userEmail);
             int updateCount = preparedStatement.executeUpdate();

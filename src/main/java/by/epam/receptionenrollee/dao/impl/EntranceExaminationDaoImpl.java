@@ -65,7 +65,7 @@ public class EntranceExaminationDaoImpl extends AbstractDao<EntranceExamination>
     @Override
     public int getSumExaminationByEnrolleeId(int id) throws DaoException {
         int sum = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.SUM_EXAMINATION)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.SUM_EXAMINATION)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

@@ -62,7 +62,7 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
 
     public int getSpecialityIdByName(String specialityName, String facultyName) throws DaoException {
         int idSpeciality = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_ID_BY_SPECIALITY_NAME_FACULTY_NAME)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_ID_BY_SPECIALITY_NAME_FACULTY_NAME)) {
             preparedStatement.setString (1, specialityName);
             preparedStatement.setString (2, facultyName);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -80,7 +80,7 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
     @Override
     public EducationInformation getSpecialityNameFacultyNameBySpecialityId(int id) throws DaoException {
         EducationInformation educationInformation = new EducationInformation();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_SPECIALITY_ID)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_SPECIALITY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -100,10 +100,10 @@ public class SpecialityDaoImpl extends AbstractDao<Speciality> implements Specia
     public int getFacultyPlan(String facultyName) throws DaoException {
         int facultyPlan = 0;
         try {
-            PreparedStatement preparedStatement =
+            var preparedStatement =
                     connection.prepareStatement(SqlQuery.FIND_FACULTY_PLAN);
             preparedStatement.setString(1, facultyName);
-            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+            try(var resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     facultyPlan = resultSet.getInt(ColumnLabel.COLUMN_LABEL_FACULTY_PLAN);
                 } else {

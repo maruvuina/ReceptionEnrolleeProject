@@ -65,7 +65,7 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
 
     public String getFacultyNameByEnrolleeSpecialityId(int idSpeciality) throws DaoException {
         String facultyName = null;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_FACULTY_NAME_BY_ENROLLEE_ID_SPECIALITY)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_FACULTY_NAME_BY_ENROLLEE_ID_SPECIALITY)) {
             preparedStatement.setInt(1, idSpeciality);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -81,7 +81,7 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
 
     public EducationInformation getSpecialityNameFacultyNameBySpecialityId(int id) throws DaoException {
         EducationInformation educationInformation = new EducationInformation();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_USER_ID)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_SPECIALITY_FACULTY_BY_USER_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

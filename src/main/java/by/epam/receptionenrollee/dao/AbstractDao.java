@@ -34,7 +34,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected List<T> findAll(Class clazz, String sqlGetAllQuery) throws DaoException {
         List<T> items = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlGetAllQuery);
+        try(var preparedStatement = connection.prepareStatement(sqlGetAllQuery);
             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 T item = getItemInstance(clazz);
@@ -50,7 +50,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected <V> List<T> findAllByValue(Class clazz, String sqlSelectByParameter, V value) throws DaoException {
         List<T> items = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
+        try(var preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -67,7 +67,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected <V> T findByValue(Class clazz, String sqlSelectByParameter, V value) throws DaoException {
         T item = getItemInstance(clazz);
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
+        try(var preparedStatement = connection.prepareStatement(sqlSelectByParameter)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -82,7 +82,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected <V> boolean deleteByValue(String sqlDeleteQuery, V value) throws DaoException {
         boolean result;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlDeleteQuery)) {
+        try(var preparedStatement = connection.prepareStatement(sqlDeleteQuery)) {
             addParameterToPreparedStatement(preparedStatement, 1, value);
             result = preparedStatement.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -94,7 +94,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected boolean insert(T entity, String sqlInsertQuery) throws DaoException {
         boolean result;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlInsertQuery, Statement.RETURN_GENERATED_KEYS)) {
+        try(var preparedStatement = connection.prepareStatement(sqlInsertQuery, Statement.RETURN_GENERATED_KEYS)) {
             mapperToDatabase.map(entity, preparedStatement);
             int affectedRows = preparedStatement.executeUpdate();
             if(result = affectedRows > 0) {
@@ -114,7 +114,7 @@ public abstract class AbstractDao<T extends Entity> {
 
     protected <V> T update(T entity, String sqlUpdateQuery, Integer paramNum, V value) throws DaoException {
         T result = null;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdateQuery)) {
+        try(var preparedStatement = connection.prepareStatement(sqlUpdateQuery)) {
             mapperToDatabase.map(entity, preparedStatement);
             addParameterToPreparedStatement(preparedStatement, paramNum, value);
             ResultSet resultSet = preparedStatement.executeQuery();

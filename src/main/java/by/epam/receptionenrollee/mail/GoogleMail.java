@@ -39,7 +39,7 @@ public class GoogleMail {
             mimeMessage.setSubject(title);
             mimeMessage.setText(message, "UTF-8");
             mimeMessage.setSentDate(new Date());
-            try (SMTPTransport transport = (SMTPTransport) session.getTransport("smtps")) {
+            try (var transport = (SMTPTransport) session.getTransport("smtps")) {
                 transport.connect("smtp.gmail.com", username, password);
                 transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
             }

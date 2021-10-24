@@ -71,7 +71,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     @Override
     public int findEnrolleeIdByUserId(int userId) throws DaoException {
         int idEnrollee = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_ID_BY_USER_ID)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_ID_BY_USER_ID)) {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -88,7 +88,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     @Override
     public List<Integer> findEnrolleesIdByFacultyName(String facultyName) throws DaoException {
         List<Integer> enrolleesId = new ArrayList<>();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEES_ID_BY_FACULTY_NAME)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEES_ID_BY_FACULTY_NAME)) {
             preparedStatement.setString(1, facultyName);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -115,7 +115,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
 
     public int getEnrolleeScoreByEnrolleeId(int idEnrollee) throws DaoException {
         int score = 0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_SCORE_BY_ID)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_ENROLLEE_SCORE_BY_ID)) {
             preparedStatement.setInt(1, idEnrollee);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -133,7 +133,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     public Enrollee updateEnrolleeSpeciality(Enrollee enrollee) throws DaoException {
-        try(PreparedStatement preparedStatement =
+        try(var preparedStatement =
                     connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_SPECIALITY)) {
             preparedStatement.setInt(1, enrollee.getIdSpeciality());
             preparedStatement.setInt(2, enrollee.getIdUser());
@@ -147,7 +147,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     public Enrollee updateEnrolleeDate(Enrollee enrollee) throws DaoException {
-        try(PreparedStatement preparedStatement =
+        try(var preparedStatement =
                     connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_DATE)) {
             preparedStatement.setString(1, enrollee.getBirthday());
             preparedStatement.setInt(2, enrollee.getIdUser());
@@ -162,7 +162,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
 
     public int findEnrolleeAttemptByEmail(String email) throws DaoException {
         int attempt = 0;
-        try(PreparedStatement preparedStatement =
+        try(var preparedStatement =
                     connection.prepareStatement(SqlQuery.FIND_ENROLLEE_ATTEMPT_BY_EMAIL)) {
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -177,7 +177,7 @@ public class EnrolleeDaoImpl extends AbstractDao<Enrollee> implements EnrolleeDa
     }
 
     public void updateEnrolleeAttempt(Enrollee enrollee) throws DaoException {
-        try(PreparedStatement preparedStatement =
+        try(var preparedStatement =
                     connection.prepareStatement(SqlQuery.ENROLLEE_UPDATE_ATTEMPT)) {
             preparedStatement.setInt(1, enrollee.getIdUser());
             preparedStatement.executeUpdate();

@@ -63,7 +63,7 @@ public class SchoolMarkDaoImpl extends AbstractDao<SchoolMark> implements School
     @Override
     public double getAvgSchoolMarkByEnrolleeId(int id) throws DaoException {
         double avg = 0.0;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.AVG_SCHOOL_MARK)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.AVG_SCHOOL_MARK)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {

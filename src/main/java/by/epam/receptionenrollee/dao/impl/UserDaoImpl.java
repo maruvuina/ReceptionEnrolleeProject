@@ -86,7 +86,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
     public boolean isUserEmailUnique(String email) throws DaoException {
         boolean isUnique = true;
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_ID_BY_EMAIL)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_ID_BY_EMAIL)) {
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -101,7 +101,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     
     public User findUserFirstLastNameEmailByUserId(int idUser) throws DaoException {
         User user = new User();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_FIRST_LAST_NAME_EMAIL_BY_USER_ID)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_USER_FIRST_LAST_NAME_EMAIL_BY_USER_ID)) {
             preparedStatement.setInt(1, idUser);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -118,7 +118,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
     public EducationInformation findFirstLastNameSpecialityFacultyByEmail(String email) throws DaoException {
         EducationInformation educationInformation = new EducationInformation();
-        try(PreparedStatement preparedStatement = connection.prepareStatement(SqlQuery.FIND_FIRST_LAST_NAME_SPECIALITY_FACULTY_BY_EMAIL)) {
+        try(var preparedStatement = connection.prepareStatement(SqlQuery.FIND_FIRST_LAST_NAME_SPECIALITY_FACULTY_BY_EMAIL)) {
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -136,7 +136,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     }
 
     public User updateUserFullName(User user) throws DaoException {
-        try(PreparedStatement preparedStatement =
+        try(var preparedStatement =
                     connection.prepareStatement(SqlQuery.USER_UPDATE_FULL_NAME)) {
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
