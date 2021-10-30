@@ -50,17 +50,17 @@ public class FacultyDaoImpl extends AbstractDao<Faculty> implements FacultyDao {
 
     @Override
     public boolean insertFaculty(Faculty faculty) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for faculty.");
     }
 
     @Override
     public boolean updateFaculty(Faculty faculty) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for faculty.");
     }
 
     @Override
     public boolean deleteFaculty(Faculty faculty) {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation for faculty.");
     }
 
     public String getFacultyNameByEnrolleeSpecialityId(int idSpeciality) throws DaoException {
