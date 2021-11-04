@@ -44,8 +44,8 @@ public enum CustomConnectionPool {
     CustomConnectionPool() {
         try {
             Class.forName(DatabaseManager.getProperty(DatabaseManager.DRIVER_NAME));
-            DatabaseProperties databasePropertie = new DatabaseProperties();
-            Properties properties = databasePropertie.getDatabaseProperties();
+            DatabaseProperties databaseProperty = new DatabaseProperties();
+            Properties properties = databaseProperty.getDatabaseProperties();
             String url = DatabaseManager.getProperty(DatabaseManager.URL);
             freeConnection = new LinkedBlockingDeque<>(getDefaultPoolSize());
             givenAwayConnections = new ArrayDeque<>();

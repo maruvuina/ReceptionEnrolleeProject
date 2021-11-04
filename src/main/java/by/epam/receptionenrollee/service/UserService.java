@@ -44,6 +44,7 @@ public class UserService {
             user = userDaoImpl.findUserByLoginPassword(email, password);
             transaction.commit();
         } catch (DaoException e) {
+            transaction.rollback();
             logger.log(Level.ERROR, "Error while trying to get user: ", e);
             throw new ServiceException(e);
         } finally {
@@ -86,6 +87,7 @@ public class UserService {
             user = userDaoImpl.findUserById(idUser);
             transaction.commit();
         } catch (DaoException e) {
+            transaction.rollback();
             logger.log(Level.ERROR, "Error while trying to get user by id: ", e);
             throw new ServiceException(e);
         } finally {
@@ -121,6 +123,7 @@ public class UserService {
             user = userDaoImpl.findUserByEmail(email);
             transaction.commit();
         } catch (DaoException e) {
+            transaction.rollback();
             logger.log(Level.ERROR, "Error while trying to get user by email: ", e);
             throw new ServiceException(e);
         } finally {
